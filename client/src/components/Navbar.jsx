@@ -23,11 +23,10 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 
-const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
+const Navbar = ({ active, isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [active, setActive] = useState("");
   const user = useSelector((state) => state.userContext.data);
 
   useEffect(() => {
@@ -38,10 +37,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
     }
   });
 
-  const handleClick = (key) => {
-    setActive(key);
-  };
-
   const handleLogOut = () => {
     localStorage.clear();
     dispatch(logOut());
@@ -51,7 +46,8 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleMenuItemClick = (navigateTo) => {
+  const handleMenuItemClick = (e, navigateTo) => {
+    e.stopPropagation();
     setAnchorEl(null);
     navigateTo && navigate(navigateTo);
   };
@@ -92,7 +88,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
                   <ListItemStyle
                     key="1"
                     onClick={() => {
-                      handleClick("1");
                       navigate("/home");
                     }}
                     sx={{
@@ -110,9 +105,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
                 <ListItem role="none">
                   <ListItemStyle
                     key="2"
-                    onClick={() => {
-                      handleClick("2");
-                    }}
+                    onClick={() => {}}
                     sx={{
                       padding: 0,
                       borderBottom: `5px solid ${
@@ -148,16 +141,16 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
                       }}
                       anchorEl={anchorEl}
                       open={open}
-                      onClose={handleMenuItemClick}
+                      onClose={(e) => handleMenuItemClick(e)}
                       TransitionComponent={Fade}
                     >
                       <MenuItem
-                        onClick={() => handleMenuItemClick("/postVacancy")}
+                        onClick={(e) => handleMenuItemClick(e, "/postVacancy")}
                       >
                         Post Vacancy
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handleMenuItemClick("/vacancies")}
+                        onClick={(e) => handleMenuItemClick(e, "/vacancies")}
                       >
                         All Vacancies
                       </MenuItem>
@@ -168,7 +161,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, isNonMobile }) => {
                 <ListItem role="none">
                   <ListItemStyle
                     key="3"
-                    onClick={() => handleClick("3")}
+                    onClick={() => {}}
                     sx={{
                       borderBottom: `5px solid ${
                         active === "3"
