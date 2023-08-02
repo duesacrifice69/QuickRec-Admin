@@ -1,0 +1,81 @@
+{
+    "state": {
+        "vacancyId": 1234,
+        "vacancy": "Deputy General Manager"
+    },
+    "sampleDetails": {
+        "basicDetails": {
+            "title": 1,
+            "nameWithInitials": "R.W.C.T.Rajapaksha",
+            "nameDenotedbyInit": "Rajapaksha Withange Chirath Timodh",
+            "otherName": "",
+            "nic": "20052803661",
+            "dateOfBirth": "Mon Dec 12 2005",
+            "sex": 1,
+            "civilStatus": 1,
+            "AddressLine1": "513/1, Highlevel Road,",
+            "AddressLine2": " Wijerama, Nugegoda.",
+            "nationality": 1,
+            "religion": 1,
+            "ethnicity": 1,
+            "mobileNo1": "781778571",
+            "mobileNo2": "701930385",
+            "email": "chirathtimodh@gmail.com"
+        },
+        "eduQualification": [
+            {
+                "type": 1,
+                "institute": "University of Moratuwa",
+                "qualification": "Bachelor in Information Technology",
+                "feild": "Information Technology",
+                "startDate": "Mon Dec 12 2005",
+                "endDate": "Mon Dec 12 2005",
+                "grade": 1,
+                "upload": {}
+            },
+            {
+                "type": 1,
+                "institute": "University of Moratuwa",
+                "qualification": "Bachelor in Information Technology",
+                "feild": "Information Technology",
+                "startDate": "Mon Dec 12 2005",
+                "endDate": "Mon Dec 12 2005",
+                "grade": 1,
+                "upload": {}
+            }
+        ],
+        "experience": [
+            {
+                "title": "test",
+                "organization": "test",
+                "startDate": "Mon Dec 12 2005",
+                "endDate": "Mon Dec 12 2005",
+                "description": "test",
+                "upload": {}
+            },
+            {
+                "title": "test",
+                "organization": "test",
+                "startDate": "Mon Dec 12 2005",
+                "endDate": "Mon Dec 12 2005",
+                "description": "test",
+                "upload": {}
+            }
+        ],
+        "otherAchievements": [
+            {
+                "title": "test",
+                "organization": "test",
+                "startDate": "Mon Dec 12 2005",
+                "endDate": "Mon Dec 12 2005",
+                "description": "test",
+                "upload": {}
+            }
+        ],
+        "attachments": {
+            "cv": {},
+            "nic": {},
+            "birthCertificate": {}
+        }
+    }
+}
