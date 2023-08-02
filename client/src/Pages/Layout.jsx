@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 const Layout = () => {
   const [isNavbar, setIsNavBar] = useState(false);
   const isNonMobile = useMediaQuery("(min-width: 600px)");
+  const [active, setActive] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -28,6 +29,7 @@ const Layout = () => {
         </Box>
         {isNavbar ? (
           <Navbar
+            active={active}
             isSidebarOpen={isSidebarOpen}
             setIsSidebarOpen={setIsSidebarOpen}
             isNonMobile={isNonMobile}
@@ -37,7 +39,7 @@ const Layout = () => {
         )}
       </Box>
       <Box>
-        <Outlet context={[setIsNavBar]} />
+        <Outlet context={[setIsNavBar, setActive]} />
       </Box>
     </Box>
   );
