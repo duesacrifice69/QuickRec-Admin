@@ -9,7 +9,6 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import LinkIcon from "@mui/icons-material/Link";
-import FileUploader from "./FileUploader";
 
 const Input = ({
   name,
@@ -53,24 +52,6 @@ const Input = ({
           >
             +94
           </Typography>
-        </InputAdornment>
-      ),
-    };
-  } else if (type === "file") {
-    inputProps = {
-      endAdornment: (
-        <InputAdornment position="end">
-          <FileUploader handleChange={handleChange}>Go</FileUploader>
-        </InputAdornment>
-      ),
-      startAdornment: (
-        <InputAdornment position="start">
-          <LinkIcon
-            sx={{
-              p: 0,
-              transform: "rotate(135deg) translate(2px,2px)",
-            }}
-          />
         </InputAdornment>
       ),
     };
