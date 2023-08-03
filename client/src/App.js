@@ -22,16 +22,17 @@ function App() {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route element={<Layout />}>
-        <Route
-          path="/"
-          element={<Navigate to={user ? "/home" : "/signin"} replace />}
-        />
-        <Route path="/signIn" element={<SignIn />} />
-        <Route path="/home" element={<Applications />} />
-        <Route path="/applications/:id" element={<Application />} />
-        <Route path="/vacancies" element={<VacancyList />} />
-        <Route path="/postVacancy" element={<PostVacancy />} />
+      <Route>
+        <Route element={<Layout />}>
+          <Route path="/signIn" element={<SignIn />} />
+        </Route>
+        <Route element={user ? <Layout /> : <Navigate to="/signIn" replace />}>
+          <Route path="/*" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Applications />} />
+          <Route path="/applications/:id" element={<Application />} />
+          <Route path="/vacancies" element={<VacancyList />} />
+          <Route path="/postVacancy" element={<PostVacancy />} />
+        </Route>
       </Route>
     )
   );
