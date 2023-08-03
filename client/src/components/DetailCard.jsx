@@ -27,7 +27,7 @@ const DetailCard = ({ detail }) => {
         sx={{ pb: "0" }}
         title={detail.institute ?? detail.title}
         titleTypographyProps={{
-          fontSize: (isMobile) => (isMobile ? "1.2rem" : "1.5rem"),
+          fontSize: isMobile ? "1.2rem" : "1.5rem",
           fontWeight: 600,
         }}
       />
