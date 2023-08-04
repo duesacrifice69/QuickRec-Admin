@@ -19,11 +19,24 @@ import {
   Typography,
   Select,
   MenuItem,
+  useMediaQuery,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+const applications = require("../Application/sampleData.json");
+
+let applicationsArray = [];
+for (let application in applications) {
+  applicationsArray.push({
+    id: application,
+    name: applications[application].sampleDetails.basicDetails.nameWithInitials,
+    vacancy: applications[application].state.vacancy,
+    phone: applications[application].sampleDetails.basicDetails.mobileNo1,
+    date: "2022-02-22",
+  });
+}
 
 const TablePaginationActions = (props) => {
   const theme = useTheme();
@@ -94,9 +107,6 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(id, name, vacancy, phone, date) {
-  return { id, name, vacancy, phone, date };
-}
 const columns = [
   {
     id: "applicationId",
@@ -109,35 +119,16 @@ const columns = [
   { id: "phoneNo", label: "Phone No", align: "center", minWidth: 100 },
   { id: "date", label: "Date", align: "center", minWidth: 110 },
 ];
-const rows = [
-  createData(
-    69,
-    "R.W.C.T.Rajapaksha",
-    "Deputy General Manager",
-    "+94714567893",
-    "2022-02-05"
-  ),
-  createData(123, "R.W.C.T.Rajapaksha", "TEsT", 9999999, "2022-02-05"),
-  createData(222, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(223, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(224, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(225, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(226, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(227, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(228, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(229, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(210, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(211, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(212, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(213, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(214, "TEst", "TEsT", 9999999, "2022-02-05"),
-  createData(215, "TEst", "TEsT", 9999999, "2022-02-05"),
-].sort((a, b) => (a.id < b.id ? -1 : 1));
+const allRows = applicationsArray.sort((a, b) =>
+  Number(a.id) < Number(b.id) ? -1 : 1
+);
 
 const Applications = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [vacancy, setVacancy] = useState("Any");
   const [setIsNavbar, setActive] = useOutletContext();
+  const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -145,6 +136,10 @@ const Applications = () => {
   useEffect(() => setActive("1"), [setActive]);
 
   // Avoid a layout jump when reaching the last page with empty rows.
+  const rows =
+    vacancy !== "Any"
+      ? allRows.filter((application) => application.vacancy === vacancy)
+      : allRows;
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -158,13 +153,13 @@ const Applications = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.main, pb: "5rem" }}>
+    <Box sx={{ backgroundColor: theme.palette.background.main, pb: "3rem" }}>
       <Container maxWidth="lg">
-        <Paper sx={{ p: "3vh 3vw" }}>
+        <Paper sx={{ p: "3rem 3vw" }}>
           <Grid
             container
             rowSpacing={3}
-            columnSpacing={{ xs: 0, sm: 2, md: 3 }}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
             <Grid item xs={2}>
               <Typography sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}>
@@ -175,6 +170,8 @@ const Applications = () => {
               <FormControl size="small">
                 <Select
                   name="vacancy"
+                  value={vacancy}
+                  onChange={(e) => setVacancy(e.target.value)}
                   required
                   MenuProps={{
                     disableScrollLock: true,
@@ -185,7 +182,11 @@ const Applications = () => {
                     backgroundColor: (theme) => theme.palette.background.main,
                   }}
                 >
-                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value="Any">Any</MenuItem>
+                  <MenuItem value="Deputy General Manager">
+                    Deputy General Manager
+                  </MenuItem>
+                  <MenuItem value="TEsT">TEsT</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -196,37 +197,100 @@ const Applications = () => {
                 sx={{
                   m: "2rem auto",
                   backgroundColor: theme.palette.secondary[100],
+                  borderRadius: "10px",
+                  p: "1rem 3vw",
                 }}
               >
-                <Grid item xs={2}>
+                <Grid item xs={isMobile ? 10.5 : 4}>
                   <Typography
                     sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
                   >
-                    Total No. of Applicants:
+                    Total No. of Applicants :
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
-                  <FormControl size="small">
-                    <Select
-                      name="noofApplicants:"
-                      required
-                      MenuProps={{
-                        disableScrollLock: true,
-                      }}
-                      sx={{
-                        minWidth: "140px",
-                        minHeight: "1.4rem",
-                        backgroundColor: (theme) =>
-                          theme.palette.background.main,
-                      }}
-                    >
-                      <MenuItem value={1}>1</MenuItem>
-                    </Select>
-                  </FormControl>
+                <Grid item xs={1.5}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    {rows.length}
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 0 : 1} />
+                <Grid item xs={isMobile ? 10.5 : 4.5}>
+                  <Typography
+                    sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
+                  >
+                    Total No. of Approved for Interviews :
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 1.5 : 1}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    {rows.length}
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 9.5 : 4}>
+                  <Typography
+                    sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
+                  >
+                    Closing Date of Application :
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 2.5 : 1.5}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    2022-02-02
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 0 : 1} />
+                <Grid item xs={isMobile ? 10.5 : 4}>
+                  <Typography
+                    sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
+                  >
+                    Total No. of Rejected :
+                  </Typography>
+                </Grid>
+                <Grid item xs={1.5}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    {rows.length}
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 9.5 : 4}>
+                  <Typography
+                    sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
+                  >
+                    Expected Date of Interview :
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 2.5 : 1.5}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    2022-02-22
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 0 : 1} />
+                <Grid item xs={isMobile ? 10.5 : 4.5}>
+                  <Typography
+                    sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
+                  >
+                    Total No. of Pending to be Reviewed :
+                  </Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 1.5 : 1}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    {rows.length}
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>{" "}
+          </Grid>
           <Table
             sx={{
               minWidth: 500,

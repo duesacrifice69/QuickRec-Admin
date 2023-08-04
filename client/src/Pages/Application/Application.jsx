@@ -3,16 +3,29 @@ import StepGuide from "../../components/StepGuide";
 import {
   Box,
   Container,
+  FormControl,
   Grid,
+  MenuItem,
+  Select,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import ApplicationSection from "../../components/ApplicationSection";
-import { useEffect } from "react";
+import ButtonComp from "../../components/ButtonComp";
+import { useEffect, useState } from "react";
+import FileViewer from "../../components/FileViewer";
+
+const initState = {
+  status: "",
+  remarks: "",
+};
 
 const Application = () => {
-  const [setNavbar] = useOutletContext();
+  const [activeStep, setActiveStep] = useState(0);
+  const [application, setApplication] = useState(initState);
+  const [setIsNavbar, setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const sampleData = require("./sampleData.json");
   const { id } = useParams();
@@ -20,12 +33,24 @@ const Application = () => {
   const navigate = useNavigate();
   const userData = sampleData[id]?.sampleDetails;
 
-  useEffect(() => setNavbar(true), [setNavbar]);
+  useEffect(() => setIsNavbar(true), [setIsNavbar]);
+  useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
     if (!userData) {
       navigate("/home");
     }
   }, [navigate, userData]);
+
+  const handleChange = (e) => {
+    setApplication({
+      ...application,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSave = () => {
+    navigate("/home");
+  };
 
   return (
     <Box
@@ -46,12 +71,15 @@ const Application = () => {
             }}
           >
             <Box
-              style={{
-                display: "flex",
+              sx={{
+                display: activeStep <= 3 ? "flex" : "none",
                 flexDirection: "column",
               }}
             >
-              <ApplicationSection title="Basic Details">
+              <ApplicationSection
+                title="Basic Details"
+                sx={{ mt: "0", mb: "4rem" }}
+              >
                 <Grid
                   container
                   rowSpacing={2}
@@ -246,7 +274,92 @@ const Application = () => {
                 details={userData.otherAchievements}
               />
             </Box>
-            <StepGuide />
+            <Box
+              sx={{
+                display: activeStep === 4 ? "flex" : "none",
+                flexDirection: "column",
+                width: "100%",
+              }}
+            >
+              <ApplicationSection
+                title="Declaration"
+                sx={{ mt: "0", mb: "4rem" }}
+                details={[]}
+              >
+                <Box
+                  sx={{
+                    padding: isMobile ? "2rem" : "1rem 0",
+                    display: "flex",
+                    flexDirection: isMobile ? "column" : "row",
+                    width: "100%",
+                    rowGap: "1rem",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <FileViewer label="CV" />
+                  <FileViewer label="NIC" />
+                  <FileViewer label="Birth Certificate" />
+                </Box>
+                <Grid container spacing={5} sx={{ p: "2rem" }}>
+                  <Grid item xs={3}>
+                    <Typography>Status:</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <FormControl size="small">
+                      <Select
+                        name="status"
+                        required
+                        value={application.status}
+                        onChange={handleChange}
+                        MenuProps={{
+                          disableScrollLock: true,
+                        }}
+                        sx={{
+                          minWidth: "140px",
+                          minHeight: "1.4rem",
+                          backgroundColor: (theme) =>
+                            theme.palette.background.main,
+                        }}
+                      >
+                        <MenuItem value={"approved"}>Approved</MenuItem>
+                        <MenuItem value={"rejected"}>Rejected</MenuItem>
+                        <MenuItem value={"pending"}>Pending</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography>Remarks:</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <TextField
+                      sx={{ backgroundColor: theme.palette.background.main }}
+                      name="remarks"
+                      value={application.remarks}
+                      onChange={handleChange}
+                      size="medium"
+                      fullWidth
+                      multiline
+                      minRows={5}
+                      maxRows={8}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ButtonComp
+                      sx={{
+                        display: "block",
+                        m: "1rem auto",
+                        p: "0.5rem 1rem ",
+                      }}
+                      onClick={handleSave}
+                      disabled={!application.status}
+                    >
+                      Save
+                    </ButtonComp>
+                  </Grid>
+                </Grid>
+              </ApplicationSection>
+            </Box>
+            <StepGuide activeStep={activeStep} setActiveStep={setActiveStep} />
           </Box>
         </Container>
       )}
