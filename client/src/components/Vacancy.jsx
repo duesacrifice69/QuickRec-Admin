@@ -12,19 +12,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { useNavigate } from "react-router-dom";
 
 const Vacancy = ({ detail, onDelete, onEdit }) => {
   const subTitle = `Posted ${detail.postedDays} days ago`;
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
-  const navigate = useNavigate();
-
-  const handleApply = () => {
-    navigate("/application/basicDetails", {
-      state: { vacancyId: detail.vacancyId, vacancy: detail.title },
-    });
-  };
 
   return (
     <Card sx={{ width: "100%" }}>

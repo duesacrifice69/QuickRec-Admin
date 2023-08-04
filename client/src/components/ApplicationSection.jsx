@@ -9,13 +9,13 @@ import {
 import { Element } from "react-scroll";
 import DetailCard from "./DetailCard";
 
-const ApplicationSection = ({ title, details, children }) => {
+const ApplicationSection = ({ title, details, children, sx }) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
 
   return (
     <Element name={title}>
-      <Paper sx={{ marginBottom: "4rem" }}>
+      <Paper sx={sx || { mb: "4rem", mt: "0.5rem" }}>
         <Typography
           sx={{
             p: "1rem 1.5rem 0.5rem",
