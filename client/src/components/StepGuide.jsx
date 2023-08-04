@@ -9,31 +9,22 @@ import {
   Box,
 } from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-scroll";
-import { useState } from "react";
+
+const handleBack = () => {};
+const handleNext = () => {};
 
 const steps = [
-  { name: "Basic Details", path: "/application/basicDetails" },
-  { name: "Educational Qualification", path: "/application/eduDetails" },
-  { name: "Professional Experience", path: "/application/proDetails" },
-  { name: "Other Achievements", path: "/application/otherDetails" },
-  { name: "Declaration", path: "/application/declaration" },
+  { name: "Basic Details" },
+  { name: "Educational Qualification" },
+  { name: "Professional Experience" },
+  { name: "Other Achievements" },
+  { name: "Declaration" },
 ];
 
-const StepGuide = ({ isMobile }) => {
+const StepGuide = ({ isMobile, activeStep, setActiveStep }) => {
   const theme = useTheme();
-  const [activeStep, setActiveStep] = useState(0);
-  const navigate = useNavigate();
 
-  const handleNext = () => {
-    // navigate(steps[activeStep + 1].path, state);
-  };
-
-  const handleBack = () => {
-    // navigate(steps[activeStep - 1].path, state);
-  };
-  const handleStep = (index) => {};
   return (
     <Box
       sx={{
@@ -135,10 +126,11 @@ const StepGuide = ({ isMobile }) => {
                   smooth={true}
                   duration={500}
                   onSetActive={() => setActiveStep(index)}
+                  onClick={() => setActiveStep(index)}
                 >
                   <StepButton
                     color="inherit"
-                    onClick={() => setActiveStep(index)}
+                    onClick={() => setTimeout(() => setActiveStep(index), 50)}
                   >
                     {label.name}
                   </StepButton>
