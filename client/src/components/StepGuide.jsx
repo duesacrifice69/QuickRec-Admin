@@ -1,18 +1,5 @@
-import {
-  useTheme,
-  Paper,
-  Stepper,
-  Step,
-  StepButton,
-  Button,
-  MobileStepper,
-  Box,
-} from "@mui/material";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { Paper, Stepper, Step, StepButton, Box } from "@mui/material";
 import { Link } from "react-scroll";
-
-const handleBack = () => {};
-const handleNext = () => {};
 
 const steps = [
   { name: "Basic Details" },
@@ -23,8 +10,6 @@ const steps = [
 ];
 
 const StepGuide = ({ isMobile, activeStep, setActiveStep }) => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
@@ -40,43 +25,7 @@ const StepGuide = ({ isMobile, activeStep, setActiveStep }) => {
           justifyContent: "center",
         }}
       >
-        {isMobile ? (
-          <MobileStepper
-            variant="dots"
-            steps={steps.length}
-            position="static"
-            activeStep={activeStep}
-            sx={{ maxWidth: 400, flexGrow: 1 }}
-            nextButton={
-              <Button
-                size="small"
-                onClick={handleNext}
-                disabled={activeStep === steps.length - 1}
-              >
-                Next
-                {theme.direction === "rtl" ? (
-                  <KeyboardArrowLeft />
-                ) : (
-                  <KeyboardArrowRight />
-                )}
-              </Button>
-            }
-            backButton={
-              <Button
-                size="small"
-                onClick={handleBack}
-                disabled={activeStep === 0}
-              >
-                {theme.direction === "rtl" ? (
-                  <KeyboardArrowRight />
-                ) : (
-                  <KeyboardArrowLeft />
-                )}
-                Back
-              </Button>
-            }
-          />
-        ) : (
+        {isMobile ?? (
           <Stepper
             nonLinear
             activeStep={activeStep}
