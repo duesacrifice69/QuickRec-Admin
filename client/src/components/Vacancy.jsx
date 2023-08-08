@@ -32,7 +32,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
           fontSize: (isMobile) => (isMobile ? "0.8rem" : "1rem"),
         }}
       />
-      <CardContent>
+      <CardContent sx={{ "&:last-child": { pb: "10px" } }}>
         <Typography
           sx={{
             fontSize: (isMobile) => (isMobile ? "14px" : "16px"),
