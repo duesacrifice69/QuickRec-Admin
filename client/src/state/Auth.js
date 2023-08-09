@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserDataFromToken } from "../functions";
+import { getUserDataFromToken } from "../utils/getDataFromToken";
 
 const userSlice = createSlice({
   name: "userContext",
