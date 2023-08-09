@@ -1,43 +1,66 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { DateField } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import {
   Box,
+  Button,
   Container,
   FormControl,
   Grid,
   MenuItem,
   Paper,
-  Select,
   TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
+import SelectComp from "../../components/SelectComp";
 
 const initState = {
   group: "",
-  recruitmentMethod: "",
-  closingDateOfApplication: null,
+  recType: "",
+  closingDate: null,
   expectedDateOfInterview: null,
   expectedNoOfApplicants: "1",
   noOfVacancies: "1",
   ageLimit: "45",
   remarks: "",
+  salaryGroup: "",
+  boardGrade: "",
 };
+const { vacancies } = require("../Vacancies/vacancies.json");
 
-const PostVacancy = () => {
+const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   const [setIsNavBar, setActive] = useOutletContext();
   const [vacancy, setVacancy] = useState(initState);
+  const [showMore, setShowMore] = useState(true);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const navigate = useNavigate();
   const theme = useTheme();
 
   useEffect(() => setIsNavBar(true), [setIsNavBar]);
   useEffect(() => setActive("2"), [setActive]);
+
+  useEffect(() => {
+    if (vacancyId) {
+      const vacancyData = vacancies.find(
+        (vacancy) => vacancy.vacancyId === vacancyId
+      );
+      setVacancy({
+        group: "",
+        expectedDateOfInterview: null,
+        expectedNoOfApplicants: "1",
+        noOfVacancies: "1",
+        ageLimit: "45",
+        remarks: "",
+        ...vacancyData,
+      });
+    }
+  }, [vacancyId]);
 
   const handleChange = (e) => {
     setVacancy({
@@ -48,8 +71,11 @@ const PostVacancy = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    isEditing && setIsEditing(false);
     navigate("/vacancies");
   };
+
+  const handleCancel = () => setIsEditing(false);
 
   return (
     <Box sx={{ backgroundColor: theme.palette.background.main, pb: "3rem" }}>
@@ -83,22 +109,14 @@ const PostVacancy = () => {
               </Grid>
               <Grid item xs={3}>
                 <FormControl size="small">
-                  <Select
+                  <SelectComp
                     name="group"
                     value={vacancy.group}
                     onChange={handleChange}
                     required
-                    MenuProps={{
-                      disableScrollLock: true,
-                    }}
-                    sx={{
-                      minWidth: "140px",
-                      minHeight: "1.4rem",
-                      backgroundColor: (theme) => theme.palette.background.main,
-                    }}
                   >
                     <MenuItem value="test">test</MenuItem>
-                  </Select>
+                  </SelectComp>
                 </FormControl>
               </Grid>
             </Grid>
@@ -126,23 +144,16 @@ const PostVacancy = () => {
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <FormControl size="small">
-                    <Select
-                      name="recruitmentMethod"
-                      value={vacancy.recruitmentMethod}
+                    <SelectComp
+                      name="recType"
+                      value={vacancy.recType}
                       onChange={handleChange}
                       required
-                      MenuProps={{
-                        disableScrollLock: true,
-                      }}
-                      sx={{
-                        minWidth: "140px",
-                        minHeight: "1.4rem",
-                        backgroundColor: (theme) =>
-                          theme.palette.background.main,
-                      }}
                     >
-                      <MenuItem value="test">test</MenuItem>
-                    </Select>
+                      <MenuItem value="External Recruitment">
+                        External Recruitment
+                      </MenuItem>
+                    </SelectComp>
                   </FormControl>
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
@@ -150,15 +161,12 @@ const PostVacancy = () => {
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <DateField
-                    value={
-                      vacancy.closingDateOfApplication &&
-                      dayjs(vacancy.closingDateOfApplication)
-                    }
+                    value={vacancy.closingDate && dayjs(vacancy.closingDate)}
                     required
                     onChange={(newValue) => {
                       handleChange({
                         target: {
-                          name: "closingDateOfApplication",
+                          name: "closingDate",
                           value: newValue.$d.toDateString(),
                         },
                       });
@@ -245,18 +253,96 @@ const PostVacancy = () => {
                     maxRows={8}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <ButtonComp
-                    type="submit"
+                <Grid item xs={1}>
+                  <Button
                     sx={{
-                      display: "block",
-                      m: "2rem 0",
-                      ml: "auto",
-                      p: "1rem ",
+                      color: "inherit",
+                      backgroundColor: "white",
+                      "&:hover": {
+                        backgroundColor: theme.palette.secondary[100],
+                      },
                     }}
+                    onClick={() => setShowMore(!showMore)}
                   >
-                    Post Vacancy
-                  </ButtonComp>
+                    {showMore ? (
+                      <>
+                        More&nbsp;
+                        <KeyboardArrowDown />
+                      </>
+                    ) : (
+                      <>
+                        Less&nbsp;
+                        <KeyboardArrowUp />
+                      </>
+                    )}
+                  </Button>
+                </Grid>
+                <Grid item xs={11}>
+                  <hr style={{ marginTop: "1rem" }} />
+                </Grid>
+                {!showMore && (
+                  <>
+                    <Grid item xs={isMobile ? 12 : 6}>
+                      <Typography>Salary Group :</Typography>
+                    </Grid>
+                    <Grid item xs={isMobile ? 12 : 6}>
+                      <FormControl size="small">
+                        <SelectComp
+                          name="salaryGroup"
+                          value={vacancy.salaryGroup}
+                          onChange={handleChange}
+                          required
+                        >
+                          <MenuItem value="HM 1-1">HM 1-1</MenuItem>
+                          <MenuItem value="HM 1-2">HM 1-2</MenuItem>
+                          <MenuItem value="HM 1-3">HM 1-3</MenuItem>
+                        </SelectComp>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={isMobile ? 12 : 6}>
+                      <Typography>Board Grade :</Typography>
+                    </Grid>
+                    <Grid item xs={isMobile ? 12 : 6}>
+                      <FormControl size="small">
+                        <SelectComp
+                          name="boardGrade"
+                          value={vacancy.boardGrade}
+                          onChange={handleChange}
+                          required
+                        >
+                          <MenuItem value="G1">G1</MenuItem>
+                          <MenuItem value="G2">G2</MenuItem>
+                          <MenuItem value="G3">G3</MenuItem>
+                        </SelectComp>
+                      </FormControl>
+                    </Grid>
+                  </>
+                )}
+                <Grid item xs={12}>
+                  {!isEditing ? (
+                    <ButtonComp
+                      type="submit"
+                      sx={{
+                        display: "block",
+                        m: "2rem 0",
+                        ml: "auto",
+                        p: "1rem ",
+                      }}
+                    >
+                      Post Vacancy
+                    </ButtonComp>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "right",
+                        gap: "10px",
+                      }}
+                    >
+                      <ButtonComp onClick={handleCancel}>Cancel</ButtonComp>
+                      <ButtonComp type="submit">Save</ButtonComp>
+                    </div>
+                  )}
                 </Grid>
               </Grid>
             </Paper>
