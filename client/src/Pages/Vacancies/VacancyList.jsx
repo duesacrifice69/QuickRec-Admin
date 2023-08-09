@@ -10,73 +10,15 @@ import { useOutletContext } from "react-router-dom";
 import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Vacancy from "../../components/Vacancy";
+import PostVacancy from "../PostVacancy/PostVacany";
 
-const vacancies = [
-  {
-    vacancyId: 1234,
-    title: "Deputy General Manager",
-    status: "Open",
-    recType: "External Recrutiement",
-    closingDate: "2023 sep 20",
-    slaryGroup: "HM 1-1",
-    boardGrade: "G2",
-    advertisement: "/path",
-    NoOfApplied: "7",
-    postedDays: 2,
-  },
-  {
-    vacancyId: 5678,
-    title: "Assistant General Manager",
-    status: "Open",
-    recType: "External Recrutiement",
-    closingDate: "2023 sep 20",
-    slaryGroup: "HM 1-1",
-    boardGrade: "G2",
-    advertisement: "/path",
-    NoOfApplied: "7",
-    postedDays: 2,
-  },
-  {
-    vacancyId: 8498,
-    title: "General Manager",
-    status: "Open",
-    recType: "External Recrutiement",
-    closingDate: "2023 sep 20",
-    slaryGroup: "HM 1-1",
-    boardGrade: "G2",
-    advertisement: "/path",
-    NoOfApplied: "7",
-    postedDays: 2,
-  },
-  {
-    vacancyId: 9101,
-    title: "Deputy General Manager",
-    status: "Open",
-    recType: "External Recrutiement",
-    closingDate: "2023 sep 20",
-    slaryGroup: "HM 1-1",
-    boardGrade: "G2",
-    advertisement: "/path",
-    NoOfApplied: "7",
-    postedDays: 2,
-  },
-  {
-    vacancyId: 1233,
-    title: "Deputy General Manager",
-    status: "Open",
-    recType: "External Recrutiement",
-    closingDate: "2023 sep 20",
-    slaryGroup: "HM 1-1",
-    boardGrade: "G2",
-    advertisement: "/path",
-    NoOfApplied: "7",
-    postedDays: 2,
-  },
-];
+const { vacancies } = require("./vacancies.json");
 
 const VacancyList = () => {
   const [setIsNavBar, setActive] = useOutletContext();
   const [vacancyList, setVacancyList] = useState(vacancies);
+  const [isEditing, setIsEditing] = useState(false);
+  const [vacancyId, setVacancyId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const theme = useTheme();
 
@@ -93,7 +35,16 @@ const VacancyList = () => {
     setVacancyList(query.length > 0 ? filteredVacancies : vacancies);
   };
 
-  return (
+  const handelDelete = (detail) => {
+    setVacancyList(vacancyList.filter((vacancy) => vacancy !== detail));
+  };
+
+  const handleEdit = (detail) => {
+    setIsEditing(true);
+    setVacancyId(detail.vacancyId);
+  };
+
+  return !isEditing ? (
     <div style={{ backgroundColor: theme.palette.background.main }}>
       <Container component="main" maxWidth="md">
         <div
@@ -148,11 +99,22 @@ const VacancyList = () => {
           }}
         >
           {vacancyList.map((detail, i) => (
-            <Vacancy key={i} detail={detail} />
+            <Vacancy
+              key={i}
+              detail={detail}
+              onDelete={() => handelDelete(detail)}
+              onEdit={() => handleEdit(detail)}
+            />
           ))}
         </div>
       </Container>
     </div>
+  ) : (
+    <PostVacancy
+      isEditing={isEditing}
+      setIsEditing={setIsEditing}
+      vacancyId={vacancyId}
+    />
   );
 };
 

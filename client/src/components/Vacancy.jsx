@@ -71,7 +71,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.closingDate}
+                {detail.publishedDate}
               </Typography>
             </div>
           </Grid>
@@ -84,7 +84,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.slaryGroup}
+                {detail.salaryGroup}
               </Typography>
             </div>
           </Grid>
