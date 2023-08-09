@@ -6,7 +6,6 @@ import {
   FormControl,
   Grid,
   MenuItem,
-  Select,
   TextField,
   Typography,
   useMediaQuery,
@@ -16,9 +15,10 @@ import ApplicationSection from "../../components/ApplicationSection";
 import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
 import FileViewer from "../../components/FileViewer";
+import SelectComp from "../../components/SelectComp";
 
 const initState = {
-  status: "",
+  status: "pending",
   remarks: "",
 };
 
@@ -78,7 +78,7 @@ const Application = () => {
             >
               <ApplicationSection
                 title="Basic Details"
-                sx={{ mt: "0", mb: "4rem" }}
+                sx={{ mt: "0", mb: "4rem", wordWrap: "break-word" }}
               >
                 <Grid
                   container
@@ -273,6 +273,12 @@ const Application = () => {
                 title="Other Achievements"
                 details={userData.otherAchievements}
               />
+              <ButtonComp
+                sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
+                onClick={() => setActiveStep(4)}
+              >
+                Save & Next
+              </ButtonComp>
             </Box>
             <Box
               sx={{
@@ -306,25 +312,16 @@ const Application = () => {
                   </Grid>
                   <Grid item xs={9}>
                     <FormControl size="small">
-                      <Select
+                      <SelectComp
                         name="status"
                         required
                         value={application.status}
                         onChange={handleChange}
-                        MenuProps={{
-                          disableScrollLock: true,
-                        }}
-                        sx={{
-                          minWidth: "140px",
-                          minHeight: "1.4rem",
-                          backgroundColor: (theme) =>
-                            theme.palette.background.main,
-                        }}
                       >
                         <MenuItem value={"approved"}>Approved</MenuItem>
                         <MenuItem value={"rejected"}>Rejected</MenuItem>
                         <MenuItem value={"pending"}>Pending</MenuItem>
-                      </Select>
+                      </SelectComp>
                     </FormControl>
                   </Grid>
                   <Grid item xs={3}>
@@ -351,7 +348,6 @@ const Application = () => {
                         p: "0.5rem 1rem ",
                       }}
                       onClick={handleSave}
-                      disabled={!application.status}
                     >
                       Save
                     </ButtonComp>

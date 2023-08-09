@@ -17,7 +17,6 @@ import {
   Grid,
   FormControl,
   Typography,
-  Select,
   MenuItem,
   useMediaQuery,
 } from "@mui/material";
@@ -25,6 +24,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import SelectComp from "../../components/SelectComp";
 const applications = require("../Application/sampleData.json");
 
 let applicationsArray = [];
@@ -108,16 +108,10 @@ TablePaginationActions.propTypes = {
 };
 
 const columns = [
-  {
-    id: "applicationId",
-    label: "Application ID",
-    align: "center",
-    minWidth: 50,
-  },
-  { id: "fullName", label: "Full Name", align: "center", minWidth: 100 },
-  { id: "vacancy", label: "Vacancy", align: "center", minWidth: 100 },
-  { id: "phoneNo", label: "Phone No", align: "center", minWidth: 100 },
-  { id: "date", label: "Date", align: "center", minWidth: 110 },
+  { id: "fullName", label: "Full Name", align: "center" },
+  { id: "vacancy", label: "Vacancy", align: "center" },
+  { id: "phoneNo", label: "Phone No", align: "center" },
+  { id: "date", label: "Date", align: "center" },
 ];
 const allRows = applicationsArray.sort((a, b) =>
   Number(a.id) < Number(b.id) ? -1 : 1
@@ -161,33 +155,25 @@ const Applications = () => {
             rowSpacing={3}
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
-            <Grid item xs={2}>
+            <Grid item xs={isMobile ? 3 : 2}>
               <Typography sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}>
                 Vacancy:
               </Typography>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={isMobile ? 9 : 10}>
               <FormControl size="small">
-                <Select
+                <SelectComp
                   name="vacancy"
                   value={vacancy}
                   onChange={(e) => setVacancy(e.target.value)}
                   required
-                  MenuProps={{
-                    disableScrollLock: true,
-                  }}
-                  sx={{
-                    minWidth: "140px",
-                    minHeight: "1.4rem",
-                    backgroundColor: (theme) => theme.palette.background.main,
-                  }}
                 >
                   <MenuItem value="Any">Any</MenuItem>
                   <MenuItem value="Deputy General Manager">
                     Deputy General Manager
                   </MenuItem>
                   <MenuItem value="TEsT">TEsT</MenuItem>
-                </Select>
+                </SelectComp>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
@@ -201,6 +187,23 @@ const Applications = () => {
                   p: "1rem 3vw",
                 }}
               >
+                {vacancy !== "Any" && (
+                  <Grid item xs={12}>
+                    <Typography
+                      sx={{
+                        textAlign: "center",
+                        fontWeight: 600,
+                        fontSize: "1.1rem",
+                        pb: "1rem",
+                        borderBottom: "1px solid " + theme.palette.primary[500],
+                      }}
+                    >
+                      <span style={{ color: theme.palette.primary[500] }}>
+                        {vacancy}
+                      </span>
+                    </Typography>
+                  </Grid>
+                )}
                 <Grid item xs={isMobile ? 10.5 : 4}>
                   <Typography
                     sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}
@@ -290,90 +293,87 @@ const Applications = () => {
                 </Grid>
               </Grid>
             </Grid>
+            <Grid item xs={12}>
+              <Table
+                sx={{
+                  display: isMobile ? "block" : "table",
+                  overflowX: "scroll",
+                  backgroundColor: theme.palette.secondary[100],
+                  border: "1px solid " + theme.palette.secondary[500],
+                  borderRadius: "3px",
+                  th: {
+                    backgroundColor: theme.palette.secondary[200],
+                  },
+                }}
+                stickyHeader
+              >
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ minWidth: "max-content" }}
+                      >
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? rows.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : rows
+                  ).map((row) => (
+                    <TableRow
+                      hover
+                      key={row.id}
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => navigate("/applications/" + row.id)}
+                    >
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="center">{row.vacancy}</TableCell>
+                      <TableCell align="center">{row.phone}</TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
+                    </TableRow>
+                  ))}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={columns.length} />
+                    </TableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TablePagination
+                      rowsPerPageOptions={[
+                        5,
+                        10,
+                        25,
+                        { label: "All", value: -1 },
+                      ]}
+                      colSpan={columns.length}
+                      count={rows.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                        native: true,
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      ActionsComponent={TablePaginationActions}
+                    />
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </Grid>
           </Grid>
-          <Table
-            sx={{
-              minWidth: 500,
-              backgroundColor: theme.palette.secondary[100],
-              border: "1px solid " + theme.palette.secondary[500],
-              borderRadius: "3px",
-              th: {
-                backgroundColor: theme.palette.secondary[200],
-              },
-            }}
-            stickyHeader
-          >
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row) => (
-                <TableRow
-                  hover
-                  key={row.id}
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/applications/" + row.id)}
-                >
-                  <TableCell style={{ width: 50 }} align="center">
-                    {row.id}
-                  </TableCell>
-                  <TableCell style={{ width: 260 }} align="left">
-                    {row.name}
-                  </TableCell>
-                  <TableCell style={{ width: 100 }} align="left">
-                    {row.vacancy}
-                  </TableCell>
-                  <TableCell style={{ width: 100 }} align="center">
-                    {row.phone}
-                  </TableCell>
-                  <TableCell style={{ width: 160 }} align="center">
-                    {row.date}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  colSpan={columns.length}
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: {
-                      "aria-label": "rows per page",
-                    },
-                    native: true,
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
         </Paper>
       </Container>
     </Box>
