@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,7 +17,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "../state/Auth";
 import { useDispatch } from "react-redux";
-import { isTokenExpired } from "../functions";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -40,14 +38,6 @@ const Navbar = ({
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
-
-  useEffect(() => {
-    if (!user?.result) {
-      navigate("/");
-    } else if (isTokenExpired()) {
-      dispatch(logOut());
-    }
-  });
 
   const handleLogOut = () => {
     localStorage.clear();
