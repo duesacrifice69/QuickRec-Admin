@@ -12,7 +12,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ListItemStyle from "./ListItemStyle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "../state/Auth";
@@ -21,6 +21,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import { isTokenExpired } from "../utils/getDataFromToken";
 
 const Navbar = ({
   active,
@@ -38,6 +39,12 @@ const Navbar = ({
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  useEffect(() => {
+    if (isTokenExpired()) {
+      dispatch(logOut());
+    }
+  });
 
   const handleLogOut = () => {
     localStorage.clear();
