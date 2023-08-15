@@ -25,7 +25,7 @@ const initState = {
 const Application = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [application, setApplication] = useState(initState);
-  const [setIsNavbar, setActive] = useOutletContext();
+  const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const sampleData = require("./sampleData.json");
   const { id } = useParams();
@@ -33,7 +33,6 @@ const Application = () => {
   const navigate = useNavigate();
   const userData = sampleData[id]?.sampleDetails;
 
-  useEffect(() => setIsNavbar(true), [setIsNavbar]);
   useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
     if (!userData) {

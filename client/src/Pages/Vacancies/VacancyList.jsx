@@ -15,14 +15,13 @@ import PostVacancy from "../PostVacancy/PostVacany";
 const { vacancies } = require("./vacancies.json");
 
 const VacancyList = () => {
-  const [setIsNavBar, setActive] = useOutletContext();
+  const [setActive] = useOutletContext();
   const [vacancyList, setVacancyList] = useState(vacancies);
   const [isEditing, setIsEditing] = useState(false);
   const [vacancyId, setVacancyId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const theme = useTheme();
 
-  useEffect(() => setIsNavBar(true), [setIsNavBar]);
   useEffect(() => setActive("2"), [setActive]);
 
   const handleSearch = (vacancies, query) => {

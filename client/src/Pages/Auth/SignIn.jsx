@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Typography, Container, Paper, Grid } from "@mui/material";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getUserDataOnSuccess, getUserDataOnFailiure } from "../../state/Auth";
 import * as api from "../../api/";
@@ -15,10 +15,6 @@ const SignIn = () => {
   const [loginData, setLoginData] = useState(initState);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [setIsNavBar] = useOutletContext();
-  useEffect(() => {
-    setIsNavBar(false);
-  });
 
   const handleShowPassowrd = () => {
     setShowPassword(!showPassword);

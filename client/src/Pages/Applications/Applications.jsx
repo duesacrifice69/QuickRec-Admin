@@ -121,12 +121,11 @@ const Applications = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [vacancy, setVacancy] = useState("Any");
-  const [setIsNavbar, setActive] = useOutletContext();
+  const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
 
-  useEffect(() => setIsNavbar(true), [setIsNavbar]);
   useEffect(() => setActive("1"), [setActive]);
 
   // Avoid a layout jump when reaching the last page with empty rows.

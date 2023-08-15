@@ -35,14 +35,13 @@ const initState = {
 const { vacancies } = require("../Vacancies/vacancies.json");
 
 const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
-  const [setIsNavBar, setActive] = useOutletContext();
+  const [setActive] = useOutletContext();
   const [vacancy, setVacancy] = useState(initState);
   const [showMore, setShowMore] = useState(true);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const navigate = useNavigate();
   const theme = useTheme();
 
-  useEffect(() => setIsNavBar(true), [setIsNavBar]);
   useEffect(() => setActive("2"), [setActive]);
 
   useEffect(() => {
