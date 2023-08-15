@@ -8,7 +8,6 @@ import {
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import LinkIcon from "@mui/icons-material/Link";
 
 const Input = ({
   name,
