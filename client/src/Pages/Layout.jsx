@@ -5,8 +5,7 @@ import logo from "../Assets/WB_Logo.png";
 import AdminPortalBanner from "../components/AdminPortalBanner";
 import Navbar from "../components/Navbar";
 
-const Layout = () => {
-  const [isNavbar, setIsNavBar] = useState(false);
+const Layout = ({ auth }) => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
   const [active, setActive] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,7 +26,7 @@ const Layout = () => {
             }}
           ></Box>
         </Box>
-        {isNavbar ? (
+        {!auth ? (
           <Navbar
             active={active}
             isSidebarOpen={isSidebarOpen}
@@ -39,7 +38,7 @@ const Layout = () => {
         )}
       </Box>
       <Box>
-        <Outlet context={[setIsNavBar, setActive]} />
+        <Outlet context={[setActive]} />
       </Box>
     </Box>
   );
