@@ -8,14 +8,14 @@ const userSlice = createSlice({
     error: null,
   },
   reducers: {
-    getUserDataOnSuccess(state, action) {
+    getUserDataOnSuccess(state) {
       state.data = getUserDataFromToken();
       state.error = null;
     },
     getUserDataOnFailiure(state, action) {
       state.error = action.payload;
     },
-    logOut(state, action) {
+    logOut(state) {
       state.data = null;
       state.error = null;
     },
