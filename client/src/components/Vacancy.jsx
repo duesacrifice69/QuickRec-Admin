@@ -12,17 +12,17 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import dayjs from "dayjs";
 
 const Vacancy = ({ detail, onDelete, onEdit }) => {
-  const subTitle = `Posted ${detail.postedDays} days ago`;
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
 
   return (
     <Card sx={{ width: "100%" }}>
       <CardHeader
-        title={detail.title}
-        subheader={subTitle}
+        title={detail.VacancyName}
+        subheader={`Posted ${detail.DaysPosted}`}
         sx={{ backgroundColor: theme.palette.secondary[400], p: "12px" }}
         titleTypographyProps={{
           fontSize: (isMobile) => (isMobile ? "1.2rem" : "1.5rem"),
@@ -41,7 +41,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
             color: theme.palette.secondary[800],
           }}
         >
-          {detail.recType}
+          {detail.RecruitmentType}
         </Typography>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={isMobile ? 12 : 4}>
@@ -58,7 +58,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.closingDate}
+                {dayjs(detail.ClosingDate).format("YYYY-MM-DD")}
               </Typography>
             </div>
           </Grid>
@@ -71,7 +71,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.publishedDate}
+                {dayjs(detail.PublishedDate).format("YYYY-MM-DD")}
               </Typography>
             </div>
           </Grid>
@@ -84,7 +84,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.salaryGroup}
+                {detail.SalaryGroup}
               </Typography>
             </div>
           </Grid>
@@ -97,7 +97,7 @@ const Vacancy = ({ detail, onDelete, onEdit }) => {
                 fontSize={isMobile ? "14px" : "16px"}
                 sx={{ fontWeight: 550, color: theme.palette.secondary[700] }}
               >
-                {detail.boardGrade}
+                {detail.BoardGrade}
               </Typography>
             </div>
           </Grid>

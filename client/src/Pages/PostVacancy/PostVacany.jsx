@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { DateField } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import {
   Box,
-  Button,
   Container,
   FormControl,
   Grid,
   MenuItem,
   Paper,
+  Switch,
   TextField,
   Typography,
   useMediaQuery,
@@ -19,25 +18,34 @@ import {
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
 import SelectComp from "../../components/SelectComp";
+import * as api from "../../api";
+import { useSelector } from "react-redux";
+import { getValue } from "../../utils/enum";
 
 const initState = {
-  group: "",
-  recType: "",
-  closingDate: null,
-  expectedDateOfInterview: null,
-  expectedNoOfApplicants: "1",
-  noOfVacancies: "1",
-  ageLimit: "45",
-  remarks: "",
-  salaryGroup: "",
-  boardGrade: "",
+  VacancyName: "",
+  RecruitmentType: "",
+  SalaryGroupId: "",
+  BoardGradeId: "",
+  PublishedDate: Date().toString(),
+  ClosingDate: null,
+  NoOfVacancies: "1",
+  PlannedInterViewDate: null,
+  AgeLimit: "45",
+  Remarks: "",
+  ExpectedNoOfApplicants: "1",
+  AdvertismentPath: "",
+  Status: "ACT",
 };
 const { vacancies } = require("../Vacancies/vacancies.json");
 
 const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   const [setActive] = useOutletContext();
-  const [vacancy, setVacancy] = useState(initState);
-  const [showMore, setShowMore] = useState(true);
+  const { UserId } = useSelector((state) => state.userContext.data.result);
+  const [vacancy, setVacancy] = useState({
+    ...initState,
+    userId: UserId,
+  });
   const isMobile = useMediaQuery("(max-width: 600px)");
   const navigate = useNavigate();
   const theme = useTheme();
@@ -50,12 +58,12 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
         (vacancy) => vacancy.vacancyId === vacancyId
       );
       setVacancy({
-        group: "",
-        expectedDateOfInterview: null,
+        Status: "",
+        PlannedInterViewDate: null,
         expectedNoOfApplicants: "1",
-        noOfVacancies: "1",
-        ageLimit: "45",
-        remarks: "",
+        NoOfVacancies: "1",
+        AgeLimit: "45",
+        Remarks: "",
         ...vacancyData,
       });
     }
@@ -68,10 +76,16 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    isEditing && setIsEditing(false);
-    navigate("/vacancies");
+    try {
+      const data = await api.createVacancy(vacancy);
+      isEditing && setIsEditing(false);
+      navigate("/vacancies");
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCancel = () => setIsEditing(false);
@@ -103,21 +117,6 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   Select the post and define details regarding the vacancy.
                 </Typography>
               </Grid>
-              <Grid item xs={3}>
-                <Typography sx={{ fontWeight: 600 }}>Group :</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <FormControl size="small">
-                  <SelectComp
-                    name="group"
-                    value={vacancy.group}
-                    onChange={handleChange}
-                    required
-                  >
-                    <MenuItem value="test">test</MenuItem>
-                  </SelectComp>
-                </FormControl>
-              </Grid>
             </Grid>
             <Paper
               sx={{
@@ -132,26 +131,37 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   <Typography
                     sx={{ fontWeight: 600, fontSize: "1.1rem", mb: "1rem" }}
                   >
-                    Promotion to :
+                    {vacancy.RecruitmentType &&
+                      getValue(vacancy.RecruitmentType) + " to :"}
                     <span style={{ color: theme.palette.primary[500] }}>
-                      Analyst Programmer --xx(xx-xx)
+                      {vacancy.VacancyName}
                     </span>
                   </Typography>
                 </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Typography>Vacancy :</Typography>
+                </Grid>
+                <Input
+                  name="VacancyName"
+                  value={vacancy.VacancyName}
+                  handleChange={handleChange}
+                  required
+                  half
+                />
                 <Grid item xs={isMobile ? 12 : 6}>
                   <Typography>Recruitment Method :</Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <FormControl size="small">
                     <SelectComp
-                      name="recType"
-                      value={vacancy.recType}
+                      name="RecruitmentType"
+                      value={vacancy.RecruitmentType}
                       onChange={handleChange}
                       required
                     >
-                      <MenuItem value="External Recruitment">
-                        External Recruitment
-                      </MenuItem>
+                      <MenuItem value="INT">Internal Recruitment</MenuItem>
+                      <MenuItem value="EXT">External Recruitment</MenuItem>
+                      <MenuItem value="PRO">Promotion Recruitment</MenuItem>
                     </SelectComp>
                   </FormControl>
                 </Grid>
@@ -160,12 +170,12 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <DateField
-                    value={vacancy.closingDate && dayjs(vacancy.closingDate)}
+                    value={vacancy.ClosingDate && dayjs(vacancy.ClosingDate)}
                     required
                     onChange={(newValue) => {
                       handleChange({
                         target: {
-                          name: "closingDate",
+                          name: "ClosingDate",
                           value: newValue.$d.toDateString(),
                         },
                       });
@@ -185,14 +195,14 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 <Grid item xs={isMobile ? 12 : 6}>
                   <DateField
                     value={
-                      vacancy.expectedDateOfInterview &&
-                      dayjs(vacancy.expectedDateOfInterview)
+                      vacancy.PlannedInterViewDate &&
+                      dayjs(vacancy.PlannedInterViewDate)
                     }
                     required
                     onChange={(newValue) => {
                       handleChange({
                         target: {
-                          name: "expectedDateOfInterview",
+                          name: "PlannedInterViewDate",
                           value: newValue.$d.toDateString(),
                         },
                       });
@@ -211,8 +221,8 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 </Grid>
                 <Input
                   type="number"
-                  name="expectedNoOfApplicants"
-                  value={vacancy.expectedNoOfApplicants}
+                  name="ExpectedNoOfApplicants"
+                  value={vacancy.ExpectedNoOfApplicants}
                   handleChange={handleChange}
                   half
                 />
@@ -221,8 +231,8 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 </Grid>
                 <Input
                   type="number"
-                  name="noOfVacancies"
-                  value={vacancy.noOfVacancies}
+                  name="NoOfVacancies"
+                  value={vacancy.NoOfVacancies}
                   handleChange={handleChange}
                   half
                 />
@@ -231,19 +241,30 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 </Grid>
                 <Input
                   type="number"
-                  name="ageLimit"
-                  value={vacancy.ageLimit}
+                  name="AgeLimit"
+                  value={vacancy.AgeLimit}
                   handleChange={handleChange}
                   half
                 />
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Typography>Advertisment :</Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Input
+                    name="AdvertismentPath"
+                    value={vacancy.AdvertismentPath}
+                    type="file"
+                    handleChange={handleChange}
+                  />
+                </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <Typography>Remarks :</Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <TextField
                     sx={{ backgroundColor: theme.palette.background.main }}
-                    name="remarks"
-                    value={vacancy.remarks}
+                    name="Remarks"
+                    value={vacancy.Remarks}
                     onChange={handleChange}
                     size="medium"
                     fullWidth
@@ -252,71 +273,60 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                     maxRows={8}
                   />
                 </Grid>
-                <Grid item xs={1}>
-                  <Button
-                    sx={{
-                      color: "inherit",
-                      backgroundColor: "white",
-                      "&:hover": {
-                        backgroundColor: theme.palette.secondary[100],
-                      },
+
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Typography sx={{ pt: "0.5rem" }}>Active :</Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Switch
+                    checked={getValue(vacancy.Status)}
+                    onChange={(e) => {
+                      handleChange({
+                        target: {
+                          name: "Status",
+                          value: e.target.checked ? "ACT" : "INA",
+                        },
+                      });
                     }}
-                    onClick={() => setShowMore(!showMore)}
-                  >
-                    {showMore ? (
-                      <>
-                        More&nbsp;
-                        <KeyboardArrowDown />
-                      </>
-                    ) : (
-                      <>
-                        Less&nbsp;
-                        <KeyboardArrowUp />
-                      </>
-                    )}
-                  </Button>
+                  />
                 </Grid>
-                <Grid item xs={11}>
-                  <hr style={{ marginTop: "1rem" }} />
+                <Grid item xs={12}>
+                  <hr />
                 </Grid>
-                {!showMore && (
-                  <>
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <Typography>Salary Group :</Typography>
-                    </Grid>
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <FormControl size="small">
-                        <SelectComp
-                          name="salaryGroup"
-                          value={vacancy.salaryGroup}
-                          onChange={handleChange}
-                          required
-                        >
-                          <MenuItem value="HM 1-1">HM 1-1</MenuItem>
-                          <MenuItem value="HM 1-2">HM 1-2</MenuItem>
-                          <MenuItem value="HM 1-3">HM 1-3</MenuItem>
-                        </SelectComp>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <Typography>Board Grade :</Typography>
-                    </Grid>
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <FormControl size="small">
-                        <SelectComp
-                          name="boardGrade"
-                          value={vacancy.boardGrade}
-                          onChange={handleChange}
-                          required
-                        >
-                          <MenuItem value="G1">G1</MenuItem>
-                          <MenuItem value="G2">G2</MenuItem>
-                          <MenuItem value="G3">G3</MenuItem>
-                        </SelectComp>
-                      </FormControl>
-                    </Grid>
-                  </>
-                )}
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Typography>Salary Group :</Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <FormControl size="small">
+                    <SelectComp
+                      name="SalaryGroupId"
+                      value={vacancy.SalaryGroupId}
+                      onChange={handleChange}
+                      required
+                    >
+                      <MenuItem value="1">HM 1-1</MenuItem>
+                      <MenuItem value="2">HM 1-2</MenuItem>
+                      <MenuItem value="3">HM 1-3</MenuItem>
+                    </SelectComp>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <Typography>Board Grade :</Typography>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 6}>
+                  <FormControl size="small">
+                    <SelectComp
+                      name="BoardGradeId"
+                      value={vacancy.BoardGradeId}
+                      onChange={handleChange}
+                      required
+                    >
+                      <MenuItem value="1">G1</MenuItem>
+                      <MenuItem value="2">G2</MenuItem>
+                      <MenuItem value="3">G3</MenuItem>
+                    </SelectComp>
+                  </FormControl>
+                </Grid>
                 <Grid item xs={12}>
                   {!isEditing ? (
                     <ButtonComp

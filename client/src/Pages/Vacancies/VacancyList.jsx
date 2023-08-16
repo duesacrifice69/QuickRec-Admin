@@ -11,12 +11,12 @@ import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Vacancy from "../../components/Vacancy";
 import PostVacancy from "../PostVacancy/PostVacany";
-
-const { vacancies } = require("./vacancies.json");
+import * as api from "../../api";
+let vacancies;
 
 const VacancyList = () => {
+  const [vacancyList, setVacancyList] = useState([]);
   const [setActive] = useOutletContext();
-  const [vacancyList, setVacancyList] = useState(vacancies);
   const [isEditing, setIsEditing] = useState(false);
   const [vacancyId, setVacancyId] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -24,10 +24,16 @@ const VacancyList = () => {
 
   useEffect(() => setActive("2"), [setActive]);
 
-  const handleSearch = (vacancies, query) => {
-    const filteredVacancies = vacancies.filter((vacancy) =>
-      vacancy.title
-        .toLowerCase()
+  useEffect(() => {
+    api.vacancies().then((res) => {
+      vacancies = res.data;
+      setVacancyList(res.data);
+    });
+  }, []);
+
+  const handleSearch = (query) => {
+    const filteredVacancies = vacancyList.filter((vacancy) =>
+      vacancy.VacancyName.toLowerCase()
         .split(" ")
         .some((word) => word.startsWith(...query.toLowerCase().split(" ")))
     );
@@ -79,12 +85,12 @@ const VacancyList = () => {
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  handleSearch(vacancies, searchText);
+                  handleSearch(searchText);
                 }
               }}
               placeholder="Search..."
             />
-            <IconButton onClick={() => handleSearch(vacancies, searchText)}>
+            <IconButton onClick={() => handleSearch(searchText)}>
               <Search />
             </IconButton>
           </Paper>
@@ -97,9 +103,9 @@ const VacancyList = () => {
             marginTop: "2rem",
           }}
         >
-          {vacancyList.map((detail, i) => (
+          {vacancyList.map((detail) => (
             <Vacancy
-              key={i}
+              key={detail.VacancyId}
               detail={detail}
               onDelete={() => handelDelete(detail)}
               onEdit={() => handleEdit(detail)}
