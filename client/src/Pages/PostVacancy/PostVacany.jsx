@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import { DateField } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
 import {
   Box,
   Container,
-  FormControl,
   Grid,
-  MenuItem,
   Paper,
   Switch,
-  TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
-import SelectComp from "../../components/SelectComp";
 import * as api from "../../api";
 import { useSelector } from "react-redux";
 import { getValue } from "../../utils/enum";
@@ -25,8 +19,8 @@ import { getValue } from "../../utils/enum";
 const initState = {
   VacancyName: "",
   RecruitmentType: "",
-  SalaryGroupId: "",
-  BoardGradeId: "",
+  SalaryGroupId: null,
+  BoardGradeId: null,
   PublishedDate: Date().toString(),
   ClosingDate: null,
   NoOfVacancies: "1",
@@ -40,6 +34,7 @@ const initState = {
 const { vacancies } = require("../Vacancies/vacancies.json");
 
 const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
+  const theme = useTheme();
   const [setActive] = useOutletContext();
   const { UserId } = useSelector((state) => state.userContext.data.result);
   const [vacancy, setVacancy] = useState({
@@ -48,7 +43,6 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   });
   const isMobile = useMediaQuery("(max-width: 600px)");
   const navigate = useNavigate();
-  const theme = useTheme();
 
   useEffect(() => setActive("2"), [setActive]);
 
@@ -91,7 +85,12 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   const handleCancel = () => setIsEditing(false);
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.main, pb: "3rem" }}>
+    <Box
+      sx={{
+        backgroundColor: (theme) => theme.palette.background.main,
+        pb: "3rem",
+      }}
+    >
       <Container maxWidth="md">
         <div
           style={{
@@ -129,151 +128,109 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
               <Grid container rowSpacing={3}>
                 <Grid item xs={12}>
                   <Typography
-                    sx={{ fontWeight: 600, fontSize: "1.1rem", mb: "1rem" }}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "1.1rem",
+                      mb: "1rem",
+                    }}
                   >
                     {vacancy.RecruitmentType &&
                       getValue(vacancy.RecruitmentType) + " to :"}
-                    <span style={{ color: theme.palette.primary[500] }}>
+                    <span
+                      style={{
+                        color: theme.palette.primary[500],
+                      }}
+                    >
                       {vacancy.VacancyName}
                     </span>
                   </Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Vacancy :</Typography>
                 </Grid>
                 <Input
                   name="VacancyName"
                   value={vacancy.VacancyName}
                   handleChange={handleChange}
+                  label="Vacancy :"
                   required
-                  half
+                  inline
                 />
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Recruitment Method :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <FormControl size="small">
-                    <SelectComp
-                      name="RecruitmentType"
-                      value={vacancy.RecruitmentType}
-                      onChange={handleChange}
-                      required
-                    >
-                      <MenuItem value="INT">Internal Recruitment</MenuItem>
-                      <MenuItem value="EXT">External Recruitment</MenuItem>
-                      <MenuItem value="PRO">Promotion Recruitment</MenuItem>
-                    </SelectComp>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Closing Date of Application :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <DateField
-                    value={vacancy.ClosingDate && dayjs(vacancy.ClosingDate)}
-                    required
-                    onChange={(newValue) => {
-                      handleChange({
-                        target: {
-                          name: "ClosingDate",
-                          value: newValue.$d.toDateString(),
-                        },
-                      });
-                    }}
-                    sx={{
-                      width: "100%",
-                      backgroundColor: (theme) => theme.palette.background.main,
-                    }}
-                    slotProps={{
-                      textField: { size: "small" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Expected Date of Interview :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <DateField
-                    value={
-                      vacancy.PlannedInterViewDate &&
-                      dayjs(vacancy.PlannedInterViewDate)
-                    }
-                    required
-                    onChange={(newValue) => {
-                      handleChange({
-                        target: {
-                          name: "PlannedInterViewDate",
-                          value: newValue.$d.toDateString(),
-                        },
-                      });
-                    }}
-                    sx={{
-                      width: "100%",
-                      backgroundColor: (theme) => theme.palette.background.main,
-                    }}
-                    slotProps={{
-                      textField: { size: "small" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Expected No. of Applicants :</Typography>
-                </Grid>
+                <Input
+                  name="RecruitmentType"
+                  type="select"
+                  options={[
+                    "Internal Recruitment",
+                    "External Recruitment",
+                    "Promotion Recruitment",
+                  ]}
+                  value={vacancy.RecruitmentType}
+                  handleChange={handleChange}
+                  label="Recruitment Method :"
+                  required
+                  inline
+                />
+                <Input
+                  name="ClosingDate"
+                  type="date"
+                  value={vacancy.ClosingDate}
+                  handleChange={handleChange}
+                  label="Closing Date of Application :"
+                  required
+                  inline
+                />
+                <Input
+                  name="PlannedInterViewDate"
+                  type="date"
+                  value={vacancy.PlannedInterViewDate}
+                  handleChange={handleChange}
+                  label="Expected Date of Interview :"
+                  required
+                  inline
+                />
                 <Input
                   type="number"
                   name="ExpectedNoOfApplicants"
+                  label="Expected No. of Applicants :"
                   value={vacancy.ExpectedNoOfApplicants}
                   handleChange={handleChange}
-                  half
+                  required
+                  inline
                 />
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>No. of Vacancies :</Typography>
-                </Grid>
                 <Input
                   type="number"
                   name="NoOfVacancies"
+                  label="No. of Vacancies :"
                   value={vacancy.NoOfVacancies}
                   handleChange={handleChange}
-                  half
+                  inline
+                  required
                 />
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Age Limit :</Typography>
-                </Grid>
                 <Input
                   type="number"
                   name="AgeLimit"
+                  label="Age Limit :"
                   value={vacancy.AgeLimit}
                   handleChange={handleChange}
-                  half
+                  inline
+                  required
                 />
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Advertisment :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Input
-                    name="AdvertismentPath"
-                    value={vacancy.AdvertismentPath}
-                    type="file"
-                    handleChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Remarks :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <TextField
-                    sx={{ backgroundColor: theme.palette.background.main }}
-                    name="Remarks"
-                    value={vacancy.Remarks}
-                    onChange={handleChange}
-                    size="medium"
-                    fullWidth
-                    multiline
-                    minRows={5}
-                    maxRows={8}
-                  />
-                </Grid>
-
+                <Input
+                  name="AdvertismentPath"
+                  label="Advertisment :"
+                  value={vacancy.AdvertismentPath}
+                  type="file"
+                  handleChange={handleChange}
+                  inline
+                />
+                <Input
+                  name="Remarks"
+                  label="Remarks :"
+                  value={vacancy.Remarks}
+                  handleChange={handleChange}
+                  size="medium"
+                  multiline
+                  inline
+                  minRows={5}
+                  maxRows={8}
+                />
                 <Grid item xs={isMobile ? 12 : 6}>
                   <Typography sx={{ pt: "0.5rem" }}>Active :</Typography>
                 </Grid>
@@ -293,40 +250,27 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 <Grid item xs={12}>
                   <hr />
                 </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Salary Group :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <FormControl size="small">
-                    <SelectComp
-                      name="SalaryGroupId"
-                      value={vacancy.SalaryGroupId}
-                      onChange={handleChange}
-                      required
-                    >
-                      <MenuItem value="1">HM 1-1</MenuItem>
-                      <MenuItem value="2">HM 1-2</MenuItem>
-                      <MenuItem value="3">HM 1-3</MenuItem>
-                    </SelectComp>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography>Board Grade :</Typography>
-                </Grid>
-                <Grid item xs={isMobile ? 12 : 6}>
-                  <FormControl size="small">
-                    <SelectComp
-                      name="BoardGradeId"
-                      value={vacancy.BoardGradeId}
-                      onChange={handleChange}
-                      required
-                    >
-                      <MenuItem value="1">G1</MenuItem>
-                      <MenuItem value="2">G2</MenuItem>
-                      <MenuItem value="3">G3</MenuItem>
-                    </SelectComp>
-                  </FormControl>
-                </Grid>
+                <Input
+                  name="SalaryGroupId"
+                  label="Salary Group :"
+                  type="select"
+                  value={vacancy.SalaryGroupId}
+                  handleChange={handleChange}
+                  options={["HM 1-1", "HM 1-2", "HM 1-3", "HM 1-4"]}
+                  autocomplete
+                  inline
+                  required
+                />
+                <Input
+                  name="BoardGradeId"
+                  label="Board Grade :"
+                  type="select"
+                  value={vacancy.BoardGradeId}
+                  handleChange={handleChange}
+                  options={["G1", "G2", "G3", "G4"]}
+                  autocomplete
+                  inline
+                />
                 <Grid item xs={12}>
                   {!isEditing ? (
                     <ButtonComp

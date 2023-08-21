@@ -15,16 +15,14 @@ import {
   IconButton,
   TableHead,
   Grid,
-  FormControl,
   Typography,
-  MenuItem,
   useMediaQuery,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import SelectComp from "../../components/SelectComp";
+import Input from "../../components/Input";
 const applications = require("../Application/sampleData.json");
 
 let applicationsArray = [];
@@ -160,20 +158,14 @@ const Applications = () => {
               </Typography>
             </Grid>
             <Grid item xs={isMobile ? 9 : 10}>
-              <FormControl size="small">
-                <SelectComp
-                  name="vacancy"
-                  value={vacancy}
-                  onChange={(e) => setVacancy(e.target.value)}
-                  required
-                >
-                  <MenuItem value="Any">Any</MenuItem>
-                  <MenuItem value="Deputy General Manager">
-                    Deputy General Manager
-                  </MenuItem>
-                  <MenuItem value="TEsT">TEsT</MenuItem>
-                </SelectComp>
-              </FormControl>
+              <Input
+                name="vacancy"
+                type="select"
+                value={vacancy}
+                handleChange={(e) => setVacancy(e.target.value)}
+                options={["Any", "Deputy General Manager", "test"]}
+                required
+              />
             </Grid>
             <Grid item xs={12}>
               <Grid

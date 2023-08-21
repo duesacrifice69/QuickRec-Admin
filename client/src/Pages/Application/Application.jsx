@@ -3,10 +3,7 @@ import StepGuide from "../../components/StepGuide";
 import {
   Box,
   Container,
-  FormControl,
   Grid,
-  MenuItem,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -15,7 +12,7 @@ import ApplicationSection from "../../components/ApplicationSection";
 import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
 import FileViewer from "../../components/FileViewer";
-import SelectComp from "../../components/SelectComp";
+import Input from "../../components/Input";
 
 const initState = {
   status: "pending",
@@ -310,30 +307,24 @@ const Application = () => {
                     <Typography>Status:</Typography>
                   </Grid>
                   <Grid item xs={9}>
-                    <FormControl size="small">
-                      <SelectComp
-                        name="status"
-                        required
-                        value={application.status}
-                        onChange={handleChange}
-                      >
-                        <MenuItem value={"approved"}>Approved</MenuItem>
-                        <MenuItem value={"rejected"}>Rejected</MenuItem>
-                        <MenuItem value={"pending"}>Pending</MenuItem>
-                      </SelectComp>
-                    </FormControl>
+                    <Input
+                      name="status"
+                      type="select"
+                      required
+                      value={application.status}
+                      handleChange={handleChange}
+                      options={["Approved", "Rejected", "Pending"]}
+                    />
                   </Grid>
                   <Grid item xs={3}>
                     <Typography>Remarks:</Typography>
                   </Grid>
                   <Grid item xs={9}>
-                    <TextField
-                      sx={{ backgroundColor: theme.palette.background.main }}
+                    <Input
                       name="remarks"
                       value={application.remarks}
-                      onChange={handleChange}
+                      handleChange={handleChange}
                       size="medium"
-                      fullWidth
                       multiline
                       minRows={5}
                       maxRows={8}
