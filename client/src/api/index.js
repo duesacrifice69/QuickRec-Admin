@@ -6,10 +6,16 @@ const config = {
   },
 };
 
-const API = axios.create({ baseURL: "http://10.0.19.177:5000" }); // 10.0.19.177
+const API = axios.create({
+  baseURL: process.env.REACT_APP_BASE_URL || "http://localhost:5000",
+}); // 10.0.19.177
 
 export const signin = async (loginData) => {
-  const response = await API.post("user/signin", loginData, config);
+  const response = await API.post(
+    "user/signin",
+    { ...loginData, admin: true },
+    config
+  );
   return response.data;
 };
 
