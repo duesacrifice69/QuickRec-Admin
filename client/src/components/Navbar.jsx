@@ -111,24 +111,13 @@ const Navbar = ({
                   <ListItemStyle
                     key="1"
                     onClick={(e) => handleClick(e, "/home")}
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 400,
-                    }}
                   >
                     Home
                   </ListItemStyle>
                 </ListItem>
 
                 <ListItem role="none">
-                  <ListItemStyle
-                    key="2"
-                    onClick={handleMenuClick}
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 400,
-                    }}
-                  >
+                  <ListItemStyle key="2" onClick={handleMenuClick}>
                     Vacancy
                     <KeyboardArrowDownIcon sx={{ pl: "5px" }} />
                   </ListItemStyle>
@@ -141,10 +130,6 @@ const Navbar = ({
                       <ListItemStyle
                         key="3"
                         onClick={(e) => handleClick(e, "/postVacancy")}
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 400,
-                        }}
                       >
                         Post Vacancy
                       </ListItemStyle>
@@ -153,10 +138,6 @@ const Navbar = ({
                       <ListItemStyle
                         key="4"
                         onClick={(e) => handleClick(e, "/vacancies")}
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 400,
-                        }}
                       >
                         All Vacancies
                       </ListItemStyle>
@@ -165,14 +146,7 @@ const Navbar = ({
                 )}
 
                 <ListItem role="none">
-                  <ListItemStyle
-                    key="5"
-                    onClick={handleClick}
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 400,
-                    }}
-                  >
+                  <ListItemStyle key="5" onClick={handleClick}>
                     Profile
                   </ListItemStyle>
                 </ListItem>
@@ -182,8 +156,6 @@ const Navbar = ({
                     key="6"
                     onClick={handleLogOut}
                     sx={{
-                      fontSize: "16px",
-                      fontWeight: 400,
                       width: "max-content",
                     }}
                   >
