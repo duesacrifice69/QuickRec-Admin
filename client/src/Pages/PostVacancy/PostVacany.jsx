@@ -14,29 +14,35 @@ import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
 import * as api from "../../api";
 import { useSelector } from "react-redux";
-import { getValue } from "../../utils/enum";
+import {
+  useGetBoardGradesQuery,
+  useGetSalaryGroupsQuery,
+} from "../../state/api";
 
 const initState = {
   VacancyName: "",
   RecruitmentType: "",
-  SalaryGroupId: null,
-  BoardGradeId: null,
+  SalaryGroupId: "",
+  BoardGradeId: "",
   PublishedDate: Date().toString(),
   ClosingDate: null,
-  NoOfVacancies: "1",
+  NoOfVacancies: 1,
   PlannedInterViewDate: null,
-  AgeLimit: "45",
+  AgeLimit: 45,
   Remarks: "",
-  ExpectedNoOfApplicants: "1",
+  ExpectedNoOfApplicants: 1,
   AdvertismentPath: "",
   Status: "ACT",
 };
-const { vacancies } = require("../Vacancies/vacancies.json");
 
-const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
+const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
   const [setActive] = useOutletContext();
   const { UserId } = useSelector((state) => state.userContext.data.result);
+  const { data: salaryGroups, isLoading: salaryGroupsIsLoading } =
+    useGetSalaryGroupsQuery();
+  const { data: boardGrades, isLoading: boardGradesIsLoading } =
+    useGetBoardGradesQuery();
   const [vacancy, setVacancy] = useState({
     ...initState,
     userId: UserId,
@@ -44,24 +50,28 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const navigate = useNavigate();
 
+  const recruitmentOptions = [
+    { text: "Internal Recruitment", value: "INT" },
+    { text: "External Recruitment", value: "EXT" },
+    { text: "Promotion Recruitment", value: "PRO" },
+    {
+      text: "Internal and External Recruitment",
+      value: "INT_EXT",
+    },
+  ];
+
   useEffect(() => setActive("2"), [setActive]);
 
   useEffect(() => {
-    if (vacancyId) {
-      const vacancyData = vacancies.find(
-        (vacancy) => vacancy.vacancyId === vacancyId
-      );
+    editingVacancy &&
       setVacancy({
-        Status: "",
-        PlannedInterViewDate: null,
-        expectedNoOfApplicants: "1",
-        NoOfVacancies: "1",
-        AgeLimit: "45",
-        Remarks: "",
-        ...vacancyData,
+        ...editingVacancy,
+        RecruitmentType: recruitmentOptions.find(
+          (v) => v.text === editingVacancy.RecruitmentType
+        ).value,
+        Status: editingVacancy.Status === "Open" ? "ACT" : "INA",
       });
-    }
-  }, [vacancyId]);
+  }, [editingVacancy]);
 
   const handleChange = (e) => {
     setVacancy({
@@ -73,10 +83,9 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await api.createVacancy(vacancy);
+      await api.createVacancy(vacancy);
       isEditing && setIsEditing(false);
       navigate("/vacancies");
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -107,13 +116,14 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
               mt: "1rem",
             }}
           >
-            Define Vacancy for Recruitment
+            {isEditing ? "Edit" : "Define"} Vacancy for Recruitment
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container rowSpacing={3} sx={{ m: "1rem auto" }}>
               <Grid item xs={12}>
                 <Typography>
-                  Select the post and define details regarding the vacancy.
+                  Select the post and {isEditing ? "edit" : "define"} details
+                  regarding the vacancy.
                 </Typography>
               </Grid>
             </Grid>
@@ -135,7 +145,9 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                     }}
                   >
                     {vacancy.RecruitmentType &&
-                      getValue(vacancy.RecruitmentType) + " to :"}
+                      recruitmentOptions.find(
+                        (v) => v.value === vacancy.RecruitmentType
+                      ).text + " to : "}
                     <span
                       style={{
                         color: theme.palette.primary[500],
@@ -156,11 +168,7 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                 <Input
                   name="RecruitmentType"
                   type="select"
-                  options={[
-                    "Internal Recruitment",
-                    "External Recruitment",
-                    "Promotion Recruitment",
-                  ]}
+                  options={recruitmentOptions}
                   value={vacancy.RecruitmentType}
                   handleChange={handleChange}
                   label="Recruitment Method :"
@@ -185,7 +193,7 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   required
                   inline
                 />
-                <Input
+                {/* <Input
                   type="number"
                   name="ExpectedNoOfApplicants"
                   label="Expected No. of Applicants :"
@@ -193,7 +201,7 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   handleChange={handleChange}
                   required
                   inline
-                />
+                /> */}
                 <Input
                   type="number"
                   name="NoOfVacancies"
@@ -232,16 +240,18 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   maxRows={8}
                 />
                 <Grid item xs={isMobile ? 12 : 6}>
-                  <Typography sx={{ pt: "0.5rem" }}>Active :</Typography>
+                  <Typography sx={{ pt: "0.5rem", fontWeight: 500 }}>
+                    Active :
+                  </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 12 : 6}>
                   <Switch
-                    checked={getValue(vacancy.Status)}
+                    checked={vacancy.Status === "ACT" ? true : false}
                     onChange={(e) => {
                       handleChange({
                         target: {
                           name: "Status",
-                          value: e.target.checked ? "ACT" : "INA",
+                          value: e.target.checked === true ? "ACT" : "INA",
                         },
                       });
                     }}
@@ -256,7 +266,8 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   type="select"
                   value={vacancy.SalaryGroupId}
                   handleChange={handleChange}
-                  options={["HM 1-1", "HM 1-2", "HM 1-3", "HM 1-4"]}
+                  options={salaryGroups}
+                  loading={salaryGroupsIsLoading}
                   autocomplete
                   inline
                   required
@@ -265,9 +276,10 @@ const PostVacancy = ({ isEditing, setIsEditing, vacancyId }) => {
                   name="BoardGradeId"
                   label="Board Grade :"
                   type="select"
+                  options={boardGrades}
+                  loading={boardGradesIsLoading}
                   value={vacancy.BoardGradeId}
                   handleChange={handleChange}
-                  options={["G1", "G2", "G3", "G4"]}
                   autocomplete
                   inline
                 />
