@@ -21,7 +21,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
-import { isTokenExpired } from "../utils/getDataFromToken";
+import { isTokenExpired } from "../utils/userValidation";
 
 const Navbar = ({
   active,
@@ -110,6 +110,7 @@ const Navbar = ({
                 <ListItem role="none">
                   <ListItemStyle
                     key="1"
+                    sx={{ fontWeight: 400, fontSize: "1rem" }}
                     onClick={(e) => handleClick(e, "/home")}
                   >
                     Home
@@ -117,7 +118,11 @@ const Navbar = ({
                 </ListItem>
 
                 <ListItem role="none">
-                  <ListItemStyle key="2" onClick={handleMenuClick}>
+                  <ListItemStyle
+                    key="2"
+                    sx={{ fontWeight: 400, fontSize: "1rem" }}
+                    onClick={handleMenuClick}
+                  >
                     Vacancy
                     <KeyboardArrowDownIcon sx={{ pl: "5px" }} />
                   </ListItemStyle>
@@ -129,6 +134,7 @@ const Navbar = ({
                     <ListItem role="none">
                       <ListItemStyle
                         key="3"
+                        sx={{ fontWeight: 400, fontSize: "1rem" }}
                         onClick={(e) => handleClick(e, "/postVacancy")}
                       >
                         Post Vacancy
@@ -137,6 +143,7 @@ const Navbar = ({
                     <ListItem role="none">
                       <ListItemStyle
                         key="4"
+                        sx={{ fontWeight: 400, fontSize: "1rem" }}
                         onClick={(e) => handleClick(e, "/vacancies")}
                       >
                         All Vacancies
@@ -146,7 +153,11 @@ const Navbar = ({
                 )}
 
                 <ListItem role="none">
-                  <ListItemStyle key="5" onClick={handleClick}>
+                  <ListItemStyle
+                    key="5"
+                    sx={{ fontWeight: 400, fontSize: "1rem" }}
+                    onClick={handleClick}
+                  >
                     Profile
                   </ListItemStyle>
                 </ListItem>
@@ -156,6 +167,8 @@ const Navbar = ({
                     key="6"
                     onClick={handleLogOut}
                     sx={{
+                      fontWeight: 400,
+                      fontSize: "1rem",
                       width: "max-content",
                     }}
                   >
