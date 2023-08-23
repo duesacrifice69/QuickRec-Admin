@@ -4,6 +4,7 @@ import {
   Typography,
   InputBase,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -11,46 +12,48 @@ import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Vacancy from "../../components/Vacancy";
 import PostVacancy from "../PostVacancy/PostVacany";
-import * as api from "../../api";
-let vacancies;
+import { useGetVacancyBySearchQuery } from "../../state/api";
 
 const VacancyList = () => {
-  const [vacancyList, setVacancyList] = useState([]);
   const [setActive] = useOutletContext();
   const [isEditing, setIsEditing] = useState(false);
-  const [vacancyId, setVacancyId] = useState(null);
+  const [editingVacancy, setEditingVacancy] = useState({});
   const [searchText, setSearchText] = useState("");
+  const [search, setSearch] = useState("");
   const theme = useTheme();
 
   useEffect(() => setActive("2"), [setActive]);
 
-  useEffect(() => {
-    api.vacancies().then((res) => {
-      vacancies = res.data;
-      setVacancyList(res.data);
-    });
-  }, []);
+  const { data: searchVacancyList, isLoading: vacancySearchLoading } =
+    useGetVacancyBySearchQuery(search);
 
-  const handleSearch = (query) => {
-    const filteredVacancies = vacancyList.filter((vacancy) =>
-      vacancy.VacancyName.toLowerCase()
-        .split(" ")
-        .some((word) => word.startsWith(...query.toLowerCase().split(" ")))
-    );
-    setVacancyList(query.length > 0 ? filteredVacancies : vacancies);
+  const handleSearch = () => {
+    setSearch(searchText);
+  };
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setSearch(searchText);
+    }
   };
 
-  const handelDelete = (detail) => {
-    setVacancyList(vacancyList.filter((vacancy) => vacancy !== detail));
+  const handleDelete = (vacancyId) => {
+    // setVacancyList(vacancyList.filter((vacancy) => vacancy !== vacancy));
   };
 
-  const handleEdit = (detail) => {
+  const handleEdit = (vacancy) => {
     setIsEditing(true);
-    setVacancyId(detail.vacancyId);
+    setEditingVacancy(vacancy);
   };
 
   return !isEditing ? (
-    <div style={{ backgroundColor: theme.palette.background.main }}>
+    <div
+      style={{
+        backgroundColor: theme.palette.background.main,
+        minHeight: "calc(100vh - 164px)",
+        paddingBottom: "20px",
+      }}
+    >
       <Container component="main" maxWidth="md">
         <div
           style={{
@@ -81,16 +84,12 @@ const VacancyList = () => {
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
+              value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSearch(searchText);
-                }
-              }}
+              onKeyPress={handleKeyPress}
               placeholder="Search..."
             />
-            <IconButton onClick={() => handleSearch(searchText)}>
+            <IconButton onClick={handleSearch}>
               <Search />
             </IconButton>
           </Paper>
@@ -103,14 +102,34 @@ const VacancyList = () => {
             marginTop: "2rem",
           }}
         >
-          {vacancyList.map((detail) => (
-            <Vacancy
-              key={detail.VacancyId}
-              detail={detail}
-              onDelete={() => handelDelete(detail)}
-              onEdit={() => handleEdit(detail)}
-            />
-          ))}
+          {searchVacancyList && !vacancySearchLoading ? (
+            searchVacancyList.data.length > 0 ? (
+              searchVacancyList.data.map((vacancy) => {
+                return (
+                  <Vacancy
+                    key={vacancy.VacancyId}
+                    vacancy={vacancy}
+                    onDelete={() => handleDelete(vacancy.VacancyId)}
+                    onEdit={() => handleEdit(vacancy)}
+                  />
+                );
+              })
+            ) : (
+              <div
+                style={{
+                  width: "max-content",
+                  height: "200px",
+                  margin: "auto",
+                }}
+              >
+                No Results ...
+              </div>
+            )
+          ) : (
+            <div style={{ width: "min-content", margin: "auto" }}>
+              <CircularProgress size="5rem" />
+            </div>
+          )}
         </div>
       </Container>
     </div>
@@ -118,7 +137,7 @@ const VacancyList = () => {
     <PostVacancy
       isEditing={isEditing}
       setIsEditing={setIsEditing}
-      vacancyId={vacancyId}
+      editingVacancy={editingVacancy}
     />
   );
 };
