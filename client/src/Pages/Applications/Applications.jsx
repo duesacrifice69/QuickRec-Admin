@@ -163,7 +163,14 @@ const Applications = () => {
                 type="select"
                 value={vacancy}
                 handleChange={(e) => setVacancy(e.target.value)}
-                options={["Any", "Deputy General Manager", "test"]}
+                options={[
+                  { value: "Any", text: "Any" },
+                  {
+                    value: "Deputy General Manager",
+                    text: "Deputy General Manager",
+                  },
+                  { value: "test", text: "test" },
+                ]}
                 required
               />
             </Grid>
