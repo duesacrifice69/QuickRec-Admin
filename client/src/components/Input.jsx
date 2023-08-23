@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -34,6 +35,7 @@ const Input = ({
   type,
   inline,
   required,
+  loading,
   handleShowPassword,
   size,
 }) => {
@@ -126,20 +128,38 @@ const Input = ({
           // with search option
           autocomplete ? (
             <Autocomplete
-              value={value}
+              value={options?.find((option) => option?.value === value) ?? null}
               onChange={(event, newValue) => {
                 handleChange({
-                  target: { name: name, value: newValue },
+                  target: { name: name, value: newValue?.value },
                 });
               }}
-              options={options}
+              options={options ?? []}
+              getOptionLabel={(options) => options?.text}
               size="small"
-              isOptionEqualToValue={(option, value) => option === value}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+              }
               sx={{
                 width: "140px",
                 backgroundColor: (theme) => theme.palette.background.main,
               }}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
             />
           ) : (
             // without search option
@@ -159,8 +179,8 @@ const Input = ({
               size="small"
             >
               {options.map((option, i) => (
-                <MenuItem key={i} value={option}>
-                  {option}
+                <MenuItem key={i} value={option.value}>
+                  {option.text}
                 </MenuItem>
               ))}
             </Select>
@@ -176,6 +196,17 @@ const Input = ({
                   (Number(e.target.value) || e.target.value === "") &&
                   e.target.value.length < 10 &&
                   handleChange(e)
+                : type === "number"
+                ? // number inputs
+                  handleChange({
+                    target: {
+                      name: name,
+                      value:
+                        e.target.value.length > 0
+                          ? Number(e.target.value)
+                          : e.target.value,
+                    },
+                  })
                 : // other inputs
                   handleChange(e);
             }}
