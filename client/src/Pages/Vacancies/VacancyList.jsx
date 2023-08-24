@@ -5,6 +5,10 @@ import {
   InputBase,
   IconButton,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -13,19 +17,27 @@ import { useTheme } from "@mui/material/styles";
 import Vacancy from "../../components/Vacancy";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
+import * as api from "../../api";
 
 const VacancyList = () => {
   const [setActive] = useOutletContext();
+  const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteVacancy, setDeleteVacancy] = useState();
   const [editingVacancy, setEditingVacancy] = useState({});
   const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const theme = useTheme();
+  const {
+    data: searchVacancyList,
+    isLoading: vacancySearchLoading,
+    refetch: refetchVacancies,
+  } = useGetVacancyBySearchQuery(search);
 
   useEffect(() => setActive("2"), [setActive]);
-
-  const { data: searchVacancyList, isLoading: vacancySearchLoading } =
-    useGetVacancyBySearchQuery(search);
+  useEffect(() => {
+    refetchVacancies();
+  }, []);
 
   const handleSearch = () => {
     setSearch(searchText);
@@ -37,8 +49,19 @@ const VacancyList = () => {
     }
   };
 
-  const handleDelete = (vacancyId) => {
-    // setVacancyList(vacancyList.filter((vacancy) => vacancy !== vacancy));
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async () => {
+    setOpen(false);
+    await api.deleteVacancy(deleteVacancy);
+    refetchVacancies();
+  };
+
+  const handleDeleteButton = (vacancyId) => {
+    setOpen(true);
+    setDeleteVacancy(vacancyId);
   };
 
   const handleEdit = (vacancy) => {
@@ -86,7 +109,7 @@ const VacancyList = () => {
               sx={{ ml: 1, flex: 1 }}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               placeholder="Search..."
             />
             <IconButton onClick={handleSearch}>
@@ -94,6 +117,17 @@ const VacancyList = () => {
             </IconButton>
           </Paper>
         </div>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Delete this Vacancy ?</DialogTitle>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} sx={{ color: "red" }}>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div
           style={{
             display: "flex",
@@ -109,7 +143,7 @@ const VacancyList = () => {
                   <Vacancy
                     key={vacancy.VacancyId}
                     vacancy={vacancy}
-                    onDelete={() => handleDelete(vacancy.VacancyId)}
+                    onDelete={() => handleDeleteButton(vacancy.VacancyId)}
                     onEdit={() => handleEdit(vacancy)}
                   />
                 );
