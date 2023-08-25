@@ -3,8 +3,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }),
   reducerPath: "adminApi",
-  tagTypes: ["Vacancy", "AppBasicDetails", "Master"],
+  tagTypes: ["Vacancy", "Application", "AppBasicDetails", "Master"],
   endpoints: (builder) => ({
+    getApplicationsByVacancy: builder.query({
+      query: (vacancyId) =>
+        `/application/allApplications?vacancyId=${vacancyId ?? ""}`,
+      providesTags: ["Application"],
+    }),
     getVacancyBySearch: builder.query({
       query: (searchQuery) => `/vacancy/search/?searchQuery=${searchQuery}`,
       providesTags: ["Vacancy"],
@@ -18,8 +23,8 @@ export const api = createApi({
       providesTags: ["Master"],
     }),
     getAppBasicDetails: builder.query({
-      query: ({ userId }) => ({
-        url: `/application/basicDetails/?userId=${userId}`,
+      query: (applicationId) => ({
+        url: `/application/basicDetails/?applicationId=${applicationId}`,
       }),
       providesTags: ["AppBasicDetails"],
     }),
@@ -35,6 +40,7 @@ export const api = createApi({
 });
 
 export const {
+  useGetApplicationsByVacancyQuery,
   useGetVacancyBySearchQuery,
   useGetBoardGradesQuery,
   useGetSalaryGroupsQuery,

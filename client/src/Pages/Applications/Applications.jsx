@@ -17,24 +17,18 @@ import {
   Grid,
   Typography,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import dayjs from "dayjs";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Input from "../../components/Input";
-const applications = require("../Application/sampleData.json");
-
-let applicationsArray = [];
-for (let application in applications) {
-  applicationsArray.push({
-    id: application,
-    name: applications[application].sampleDetails.basicDetails.nameWithInitials,
-    vacancy: applications[application].state.vacancy,
-    phone: applications[application].sampleDetails.basicDetails.mobileNo1,
-    date: "2022-02-22",
-  });
-}
+import {
+  useGetApplicationsByVacancyQuery,
+  useGetVacancyBySearchQuery,
+} from "../../state/api";
 
 const TablePaginationActions = (props) => {
   const theme = useTheme();
@@ -111,26 +105,43 @@ const columns = [
   { id: "phoneNo", label: "Phone No", align: "center" },
   { id: "date", label: "Date", align: "center" },
 ];
-const allRows = applicationsArray.sort((a, b) =>
-  Number(a.id) < Number(b.id) ? -1 : 1
-);
 
 const Applications = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [vacancy, setVacancy] = useState("Any");
+  const [vacancyId, setVacancyId] = useState(undefined);
+  const [vacancy, setVacancy] = useState(null);
   const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
+  const {
+    data: allApplications,
+    isLoading: applicationsIsLoading,
+    refetch: refetchApplications,
+  } = useGetApplicationsByVacancyQuery(vacancyId);
+  const {
+    data: vacancies,
+    isLoading: vacanciesIsLoading,
+    refetch: refetchVacancies,
+  } = useGetVacancyBySearchQuery("");
+
+  useEffect(() => {
+    !vacanciesIsLoading &&
+      setVacancy(
+        vacancies.data.find(({ VacancyId }) => VacancyId == vacancyId)
+      );
+  }, [vacancyId]);
+
+  useEffect(() => {
+    refetchVacancies();
+    refetchApplications();
+  }, []);
 
   useEffect(() => setActive("1"), [setActive]);
 
+  const rows = allApplications?.data ?? [];
   // Avoid a layout jump when reaching the last page with empty rows.
-  const rows =
-    vacancy !== "Any"
-      ? allRows.filter((application) => application.vacancy === vacancy)
-      : allRows;
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -161,17 +172,14 @@ const Applications = () => {
               <Input
                 name="vacancy"
                 type="select"
-                value={vacancy}
-                handleChange={(e) => setVacancy(e.target.value)}
-                options={[
-                  { value: "Any", text: "Any" },
-                  {
-                    value: "Deputy General Manager",
-                    text: "Deputy General Manager",
-                  },
-                  { value: "test", text: "test" },
-                ]}
-                required
+                value={vacancyId}
+                handleChange={(e) => setVacancyId(e.target.value)}
+                options={vacancies?.data.map(({ VacancyName, VacancyId }) => ({
+                  value: VacancyId,
+                  text: VacancyName,
+                }))}
+                loading={vacanciesIsLoading}
+                autocomplete
               />
             </Grid>
             <Grid item xs={12}>
@@ -185,7 +193,7 @@ const Applications = () => {
                   p: "1rem 3vw",
                 }}
               >
-                {vacancy !== "Any" && (
+                {vacancy && (
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -197,7 +205,7 @@ const Applications = () => {
                       }}
                     >
                       <span style={{ color: theme.palette.primary[500] }}>
-                        {vacancy}
+                        {vacancy?.VacancyName}
                       </span>
                     </Typography>
                   </Grid>
@@ -242,7 +250,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    2022-02-02
+                    {dayjs(vacancy?.ClosingDate).format("YYYY-MM-DD")}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 0 : 1} />
@@ -271,7 +279,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    2022-02-22
+                    {dayjs(vacancy?.PlannedInterViewDate).format("YYYY-MM-DD")}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 0 : 1} />
@@ -318,57 +326,79 @@ const Applications = () => {
                     ))}
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? rows.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : rows
-                  ).map((row) => (
-                    <TableRow
-                      hover
-                      key={row.id}
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => navigate("/applications/" + row.id)}
-                    >
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="center">{row.vacancy}</TableCell>
-                      <TableCell align="center">{row.phone}</TableCell>
-                      <TableCell align="center">{row.date}</TableCell>
-                    </TableRow>
-                  ))}
-                  {emptyRows > 0 && (
+                {applicationsIsLoading ? (
+                  <TableBody>
                     <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={columns.length} />
+                      <TableCell colSpan={columns.length}>
+                        <div style={{ width: "min-content", margin: "auto" }}>
+                          <CircularProgress size="5rem" />
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: "All", value: -1 },
-                      ]}
-                      colSpan={columns.length}
-                      count={rows.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
+                  </TableBody>
+                ) : (
+                  <>
+                    <TableBody>
+                      {(rowsPerPage > 0
+                        ? rows.slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                        : rows
+                      ).map((row) => (
+                        <TableRow
+                          hover
+                          key={row.ApplicationId}
+                          sx={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate("/applications/" + row.ApplicationId)
+                          }
+                        >
+                          <TableCell align="left">
+                            {row.NameWithInitials}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.VacancyName}
+                          </TableCell>
+                          <TableCell align="center">{row.MobileNo1}</TableCell>
+                          <TableCell align="center">
+                            {dayjs(row.AppliedDate).format("YYYY-MM-DD")}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={columns.length} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TablePagination
+                          rowsPerPageOptions={[
+                            5,
+                            10,
+                            25,
+                            { label: "All", value: -1 },
+                          ]}
+                          colSpan={columns.length}
+                          count={rows.length}
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          SelectProps={{
+                            inputProps: {
+                              "aria-label": "rows per page",
+                            },
+                            native: true,
+                          }}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
+                          ActionsComponent={TablePaginationActions}
+                        />
+                      </TableRow>
+                    </TableFooter>
+                  </>
+                )}
               </Table>
             </Grid>
           </Grid>

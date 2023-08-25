@@ -141,7 +141,7 @@ const Input = ({
                 option.value === value.value
               }
               sx={{
-                width: "140px",
+                maxWidth: "200px",
                 backgroundColor: (theme) => theme.palette.background.main,
               }}
               renderInput={(params) => (

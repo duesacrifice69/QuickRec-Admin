@@ -8,11 +8,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import dayjs from "dayjs";
 import ApplicationSection from "../../components/ApplicationSection";
 import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
 import FileViewer from "../../components/FileViewer";
 import Input from "../../components/Input";
+import { useGetAppBasicDetailsQuery } from "../../state/api";
 
 const initState = {
   status: "pending",
@@ -24,18 +26,19 @@ const Application = () => {
   const [application, setApplication] = useState(initState);
   const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const sampleData = require("./sampleData.json");
   const { id } = useParams();
   const theme = useTheme();
   const navigate = useNavigate();
-  const userData = sampleData[id]?.sampleDetails;
+  const { data: basicDetailsData, isLoading: basicDetailsIsLoading } =
+    useGetAppBasicDetailsQuery(id);
+  const basicDetails = !basicDetailsIsLoading && basicDetailsData.data;
 
   useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
-    if (!userData) {
+    if (!basicDetailsIsLoading && !basicDetails) {
       navigate("/home");
     }
-  }, [navigate, userData]);
+  }, [navigate]);
 
   const handleChange = (e) => {
     setApplication({
@@ -56,7 +59,7 @@ const Application = () => {
         pb: "2rem",
       }}
     >
-      {userData && (
+      {basicDetails && (
         <Container maxWidth="lg">
           <Box
             sx={{
@@ -89,8 +92,7 @@ const Application = () => {
                         fontWeight: 600,
                       }}
                     >
-                      {userData.basicDetails.title +
-                        userData.basicDetails.nameWithInitials}
+                      {basicDetails.title + basicDetails.nameWithInitials}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -106,7 +108,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.nic}
+                      {basicDetails.nic}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -122,7 +124,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.email}
+                      {basicDetails.email}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -138,7 +140,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.sex}
+                      {basicDetails.sex}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -154,8 +156,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      +94{userData.basicDetails.mobileNo1}, +94
-                      {userData.basicDetails.mobileNo2}
+                      {basicDetails.mobileNo1},{basicDetails.mobileNo2}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -171,7 +172,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.civilStatus}
+                      {basicDetails.civilStatus}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -187,7 +188,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.nationality}
+                      {basicDetails.nationality}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -203,7 +204,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.dateOfBirth}
+                      {dayjs(basicDetails.dateOfBirth).format("YYYY-MM-DD")}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -219,7 +220,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.religion}
+                      {basicDetails.religion}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -235,8 +236,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.AddressLine1},
-                      {userData.basicDetails.AddressLine2}
+                      {basicDetails.AddressLine1},{basicDetails.AddressLine2}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -252,23 +252,23 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {userData.basicDetails.ethnicity}
+                      {basicDetails.ethnicity}
                     </Typography>
                   </Grid>
                 </Grid>
               </ApplicationSection>
-              <ApplicationSection
+              {/* <ApplicationSection
                 title="Educational Qualification"
-                details={userData.eduQualification}
+                details={eduQualification}
               />
               <ApplicationSection
                 title="Professional Experience"
-                details={userData.experience}
+                details={experience}
               />
               <ApplicationSection
                 title="Other Achievements"
-                details={userData.otherAchievements}
-              />
+                details={otherAchievements}
+              /> */}
               <ButtonComp
                 sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
                 onClick={() => setActiveStep(4)}
@@ -313,7 +313,11 @@ const Application = () => {
                       required
                       value={application.status}
                       handleChange={handleChange}
-                      options={["Approved", "Rejected", "Pending"]}
+                      options={[
+                        { value: "approve", text: "Approve" },
+                        { value: "reject", text: "Reject" },
+                        { value: "pending", text: "Pending" },
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={3}>
