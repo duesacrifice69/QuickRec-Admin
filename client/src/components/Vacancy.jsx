@@ -150,7 +150,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
           <div style={{ display: "flex", gap: "10px" }}>
             <VisibilityIcon sx={{ fontSize: "24px" }} />
             <Typography fontSize={isMobile ? "14px" : "16px"}>
-              Applied ({vacancy.NoOfApplied})
+              Applied ({vacancy.NoOfApplicants})
             </Typography>
           </div>
           <div style={{ marginLeft: "auto" }}>
