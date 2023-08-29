@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -14,10 +14,7 @@ import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
 import * as api from "../../api";
 import { useSelector } from "react-redux";
-import {
-  useGetBoardGradesQuery,
-  useGetSalaryGroupsQuery,
-} from "../../state/api";
+import { useGetMasterDataQuery } from "../../state/api";
 
 const initState = {
   VacancyName: "",
@@ -39,17 +36,14 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
   const [setActive] = useOutletContext();
   const { UserId } = useSelector((state) => state.userContext.data.result);
-  const { data: salaryGroups, isLoading: salaryGroupsIsLoading } =
-    useGetSalaryGroupsQuery();
-  const { data: boardGrades, isLoading: boardGradesIsLoading } =
-    useGetBoardGradesQuery();
+  const { data: masterData, isLoading: masterDataIsLoading } =
+    useGetMasterDataQuery();
+  const [response, setResponse] = useState();
   const [vacancy, setVacancy] = useState({
     ...initState,
     userId: UserId,
   });
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const navigate = useNavigate();
-
   const recruitmentOptions = [
     { text: "Internal Recruitment", value: "INT" },
     { text: "External Recruitment", value: "EXT" },
@@ -83,12 +77,14 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.createVacancy(vacancy);
-      isEditing && setIsEditing(false);
-      navigate("/vacancies");
+      const result = await api.createOrUpdateVacancy(vacancy);
+      setResponse(result);
     } catch (error) {
       console.log(error);
     }
+    setTimeout(() => {
+      setResponse("");
+    }, 5000);
   };
 
   const handleCancel = () => setIsEditing(false);
@@ -266,8 +262,8 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                   type="select"
                   value={vacancy.SalaryGroupId}
                   handleChange={handleChange}
-                  options={salaryGroups}
-                  loading={salaryGroupsIsLoading}
+                  options={masterData?.data?.salaryGroups}
+                  loading={masterDataIsLoading}
                   autocomplete
                   inline
                   required
@@ -276,12 +272,13 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                   name="BoardGradeId"
                   label="Board Grade :"
                   type="select"
-                  options={boardGrades}
-                  loading={boardGradesIsLoading}
+                  options={masterData?.data?.boardGrades}
+                  loading={masterDataIsLoading}
                   value={vacancy.BoardGradeId}
                   handleChange={handleChange}
                   autocomplete
                   inline
+                  required
                 />
                 <Grid item xs={12}>
                   {!isEditing ? (
@@ -313,6 +310,20 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
             </Paper>
           </form>
         </div>
+        {response && (
+          <Typography
+            sx={{
+              fontSize: "0.8rem",
+              m: "1rem",
+              p: "1rem",
+              color: "#ff0000",
+              border: "1px solid red",
+              borderRadius: "5px",
+            }}
+          >
+            {response.message}
+          </Typography>
+        )}
       </Container>
     </Box>
   );

@@ -14,12 +14,8 @@ export const api = createApi({
       query: (searchQuery) => `/vacancy/search/?searchQuery=${searchQuery}`,
       providesTags: ["Vacancy"],
     }),
-    getSalaryGroups: builder.query({
-      query: () => `/master/salaryGroups`,
-      providesTags: ["Master"],
-    }),
-    getBoardGrades: builder.query({
-      query: () => `/master/boardGrades`,
+    getMasterData: builder.query({
+      query: () => `/common/masterData`,
       providesTags: ["Master"],
     }),
     getAppBasicDetails: builder.query({
@@ -28,22 +24,12 @@ export const api = createApi({
       }),
       providesTags: ["AppBasicDetails"],
     }),
-    createAppBasicDetails: builder.mutation({
-      query: (createReq) => ({
-        url: `/application/addBasicDetails`,
-        method: "POST",
-        body: createReq,
-      }),
-      invalidatesTags: ["AppBasicDetails"],
-    }),
   }),
 });
 
 export const {
   useGetApplicationsByVacancyQuery,
   useGetVacancyBySearchQuery,
-  useGetBoardGradesQuery,
-  useGetSalaryGroupsQuery,
-  useCreateAppBasicDetailsMutation,
+  useGetMasterDataQuery,
   useGetAppBasicDetailsQuery,
 } = api;
