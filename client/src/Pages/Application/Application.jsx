@@ -1,4 +1,4 @@
-import { useOutletContext, useParams, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import StepGuide from "../../components/StepGuide";
 import {
   Box,
@@ -14,7 +14,10 @@ import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
 import FileViewer from "../../components/FileViewer";
 import Input from "../../components/Input";
-import { useGetAppBasicDetailsQuery } from "../../state/api";
+import {
+  useApproveDetailMutation,
+  useGetAppDetailsQuery,
+} from "../../state/api";
 
 const initState = {
   status: "pending",
@@ -25,25 +28,37 @@ const Application = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [application, setApplication] = useState(initState);
   const [setActive] = useOutletContext();
+  const [approveDetail] = useApproveDetailMutation();
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const { id } = useParams();
   const theme = useTheme();
+  const location = useLocation();
+  const params = location?.state;
   const navigate = useNavigate();
-  const { data: basicDetailsData, isLoading: basicDetailsIsLoading } =
-    useGetAppBasicDetailsQuery(id);
-  const basicDetails = !basicDetailsIsLoading && basicDetailsData.data;
+  const { data: applicationData, isLoading: applicationsIsLoading } =
+    useGetAppDetailsQuery(params);
+  const { basicDetails, education, experience, otherDetails } =
+    !applicationsIsLoading && applicationData?.data;
 
   useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
-    if (!basicDetailsIsLoading && !basicDetails) {
+    if (!params) {
       navigate("/home");
     }
-  }, [navigate]);
+  }, [navigate, params]);
 
   const handleChange = (e) => {
     setApplication({
       ...application,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleApprove = async (e, stepId, detailId) => {
+    approveDetail({
+      applicationId: params.applicationId,
+      stepId: stepId,
+      detailId: detailId,
+      isApproved: e.target.checked ? 1 : 0,
     });
   };
 
@@ -77,6 +92,10 @@ const Application = () => {
             >
               <ApplicationSection
                 title="Basic Details"
+                isApproved={basicDetails.isApproved}
+                handleApprove={(e) =>
+                  handleApprove(e, 1, basicDetails.basicDetailsId)
+                }
                 sx={{ mt: "0", mb: "4rem", wordWrap: "break-word" }}
               >
                 <Grid
@@ -88,11 +107,11 @@ const Application = () => {
                   <Grid item xs={12}>
                     <Typography
                       sx={{
-                        fontSize: isMobile ? "1.2rem" : "1.5rem",
+                        fontSize: isMobile ? "1rem" : "1.2rem",
                         fontWeight: 600,
                       }}
                     >
-                      {basicDetails.title + basicDetails.nameWithInitials}
+                      {basicDetails.title}. {basicDetails.nameWithInitials}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -236,7 +255,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {basicDetails.AddressLine1},{basicDetails.AddressLine2}
+                      {basicDetails.addressLine1},{basicDetails.addressLine2}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
@@ -257,18 +276,21 @@ const Application = () => {
                   </Grid>
                 </Grid>
               </ApplicationSection>
-              {/* <ApplicationSection
+              <ApplicationSection
                 title="Educational Qualification"
-                details={eduQualification}
+                details={education}
+                handleApprove={(e, detailId) => handleApprove(e, 2, detailId)}
               />
               <ApplicationSection
                 title="Professional Experience"
                 details={experience}
+                handleApprove={(e, detailId) => handleApprove(e, 3, detailId)}
               />
               <ApplicationSection
                 title="Other Achievements"
-                details={otherAchievements}
-              /> */}
+                details={otherDetails}
+                handleApprove={(e, detailId) => handleApprove(e, 4, detailId)}
+              />
               <ButtonComp
                 sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
                 onClick={() => setActiveStep(4)}
@@ -298,9 +320,12 @@ const Application = () => {
                     justifyContent: "space-around",
                   }}
                 >
-                  <FileViewer label="CV" />
-                  <FileViewer label="NIC" />
-                  <FileViewer label="Birth Certificate" />
+                  <FileViewer label="CV" fileName={application?.cv} />
+                  <FileViewer label="NIC" fileName={application?.nic} />
+                  <FileViewer
+                    label="Birth Certificate"
+                    fileName={application?.bc}
+                  />
                 </Box>
                 <Grid container spacing={5} sx={{ p: "2rem" }}>
                   <Grid item xs={3}>
