@@ -17,6 +17,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import FileUploader from "./FileUploader";
 import { DateField } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 const Input = ({
   name,
@@ -33,6 +34,7 @@ const Input = ({
   minRows,
   maxRows,
   type,
+  setAttachment,
   inline,
   required,
   loading,
@@ -41,6 +43,7 @@ const Input = ({
 }) => {
   let inputProps = {};
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const [errorText, setErrorText] = useState("");
 
   if (name === "password") {
     inputProps = {
@@ -75,6 +78,8 @@ const Input = ({
           <FileUploader
             required={required}
             name={name}
+            setAttachment={setAttachment}
+            setError={setErrorText}
             handleChange={handleChange}
           >
             Go
@@ -147,6 +152,7 @@ const Input = ({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  required={required}
                   InputProps={{
                     ...params.InputProps,
                     endAdornment: (
@@ -214,14 +220,19 @@ const Input = ({
             required={required}
             disabled={type === "file" ? true : disabled}
             multiline={multiline}
-            error={error}
-            helperText={helperText}
+            error={errorText ? true : error}
+            helperText={helperText ?? errorText}
             minRows={minRows}
             maxRows={maxRows}
             type={type === "file" ? null : type}
             InputProps={inputProps}
             sx={{
               backgroundColor: (theme) => theme.palette.background.main,
+              "&  .MuiFormHelperText-root.Mui-error": {
+                backgroundColor: "#fff",
+                m: 0,
+                p: "4px 14px 0",
+              },
             }}
             size={size ? size : "small"}
           />
