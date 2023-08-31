@@ -22,6 +22,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import { isTokenExpired } from "../utils/userValidation";
+import { api } from "../state/api";
 
 const Navbar = ({
   active,
@@ -42,12 +43,13 @@ const Navbar = ({
 
   useEffect(() => {
     if (isTokenExpired()) {
-      dispatch(logOut());
+      handleLogOut();
     }
   });
 
   const handleLogOut = () => {
     localStorage.clear();
+    dispatch(api.util.resetApiState());
     dispatch(logOut());
   };
   const handleMenuClick = (event) => {
