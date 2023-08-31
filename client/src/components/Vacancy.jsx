@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import DownloadIcon from "./DownloadIcon";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import dayjs from "dayjs";
@@ -129,13 +129,17 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
             </div>
           </Grid>
           <Grid item xs={isMobile ? 12 : 4}>
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div
+              style={{
+                display: "flex",
+                marginTop: "-8px",
+                alignItems: "center",
+              }}
+            >
               <Typography fontSize={isMobile ? "14px" : "16px"}>
                 Advertisement:{" "}
               </Typography>
-              <DescriptionOutlinedIcon
-                sx={{ color: (theme) => theme.palette.primary[500] }}
-              />
+              <DownloadIcon fileName={vacancy.AdvertismentPath} />
             </div>
           </Grid>
         </Grid>
@@ -150,7 +154,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
           <div style={{ display: "flex", gap: "10px" }}>
             <VisibilityIcon sx={{ fontSize: "24px" }} />
             <Typography fontSize={isMobile ? "14px" : "16px"}>
-              Applied ({vacancy.NoOfApplied})
+              Applied ({vacancy.NoOfApplicants})
             </Typography>
           </div>
           <div style={{ marginLeft: "auto" }}>
