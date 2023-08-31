@@ -31,7 +31,7 @@ function App() {
         <Route element={user ? <Layout /> : <Navigate to="/signIn" replace />}>
           <Route path="/*" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Applications />} />
-          <Route path="/applications/:id" element={<Application />} />
+          <Route path="/application" element={<Application />} />
           <Route path="/vacancies" element={<VacancyList />} />
           <Route path="/postVacancy" element={<PostVacancy />} />
         </Route>
