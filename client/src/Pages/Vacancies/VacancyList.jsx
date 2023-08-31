@@ -17,27 +17,20 @@ import { useTheme } from "@mui/material/styles";
 import Vacancy from "../../components/Vacancy";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
-import * as api from "../../api";
 
 const VacancyList = () => {
   const [setActive] = useOutletContext();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [deleteVacancy, setDeleteVacancy] = useState();
+  // const [deleteVacancy, setDeleteVacancy] = useState();
   const [editingVacancy, setEditingVacancy] = useState({});
   const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const theme = useTheme();
-  const {
-    data: searchVacancyList,
-    isLoading: vacancySearchLoading,
-    refetch: refetchVacancies,
-  } = useGetVacancyBySearchQuery(search);
+  const { data: searchVacancyList, isLoading: vacancySearchLoading } =
+    useGetVacancyBySearchQuery(search);
 
   useEffect(() => setActive("2"), [setActive]);
-  useEffect(() => {
-    refetchVacancies();
-  }, []);
 
   const handleSearch = () => {
     setSearch(searchText);
@@ -55,13 +48,12 @@ const VacancyList = () => {
 
   const handleDelete = async () => {
     setOpen(false);
-    await api.deleteVacancy(deleteVacancy);
-    refetchVacancies();
+    // await api.deleteVacancy(deleteVacancy);
   };
 
   const handleDeleteButton = (vacancyId) => {
     setOpen(true);
-    setDeleteVacancy(vacancyId);
+    // setDeleteVacancy(vacancyId);
   };
 
   const handleEdit = (vacancy) => {
