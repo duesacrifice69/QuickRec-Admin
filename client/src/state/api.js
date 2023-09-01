@@ -25,9 +25,11 @@ export const api = createApi({
       providesTags: ["Application"],
     }),
     createVacancy: builder.mutation({
-      query: (createReq, attachment) => {
+      query: ({ createReq, attachment }) => {
         const formData = new FormData();
         formData.append("VacancyName", createReq.VacancyName);
+        createReq.VacancyId &&
+          formData.append("VacancyId", createReq.VacancyId);
         formData.append("RecruitmentType", createReq.RecruitmentType);
         formData.append("SalaryGroupId", createReq.SalaryGroupId);
         formData.append("BoardGradeId", createReq.BoardGradeId);
@@ -44,7 +46,6 @@ export const api = createApi({
         formData.append("AdvertismentPath", createReq.AdvertismentPath);
         formData.append("attachment", attachment);
         formData.append("Status", createReq.Status);
-
         return {
           url: `/vacancy/createVacancy`,
           method: "POST",
