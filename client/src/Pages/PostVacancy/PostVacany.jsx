@@ -81,12 +81,15 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await createVacancy(vacancy, attachment);
-    console.log(result);
+    const result = await createVacancy({
+      createReq: vacancy,
+      attachment: attachment,
+    });
     setResponse(result);
     setVacancy(initState);
     setTimeout(() => {
       setResponse(null);
+      isEditing && handleCancel();
     }, 5000);
   };
 
@@ -317,34 +320,20 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       fontSize: "0.8rem",
                       m: "1rem",
                       p: "1rem",
-                      color: response.error ? "#ff0000" : "#12d104",
+                      color: response.data ? "#12d104" : "#ff0000",
                       border: `1px solid ${
-                        response.error ? "#ff0000" : "#12d104"
+                        response.data ? "#12d104" : "#ff0000"
                       }`,
                       borderRadius: "5px",
                     }}
                   >
-                    {response.message}
+                    {response?.data?.message ?? response?.error?.data?.message}
                   </Typography>
                 )}
               </Grid>
             </Paper>
           </form>
         </div>
-        {response && (
-          <Typography
-            sx={{
-              fontSize: "0.8rem",
-              m: "1rem",
-              p: "1rem",
-              color: "#ff0000",
-              border: "1px solid red",
-              borderRadius: "5px",
-            }}
-          >
-            {response.message}
-          </Typography>
-        )}
       </Container>
     </Box>
   );

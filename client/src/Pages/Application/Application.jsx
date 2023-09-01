@@ -74,7 +74,7 @@ const Application = () => {
         pb: "2rem",
       }}
     >
-      {basicDetails && (
+      {applicationData && (
         <Container maxWidth="lg">
           <Box
             sx={{
