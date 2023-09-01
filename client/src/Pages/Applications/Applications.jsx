@@ -115,28 +115,17 @@ const Applications = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
-  const {
-    data: allApplications,
-    isLoading: applicationsIsLoading,
-    refetch: refetchApplications,
-  } = useGetApplicationsByVacancyQuery(vacancyId);
-  const {
-    data: vacancies,
-    isLoading: vacanciesIsLoading,
-    refetch: refetchVacancies,
-  } = useGetVacancyBySearchQuery("");
+  const { data: allApplications, isLoading: applicationsIsLoading } =
+    useGetApplicationsByVacancyQuery(vacancyId);
+  const { data: vacancies, isLoading: vacanciesIsLoading } =
+    useGetVacancyBySearchQuery("");
 
   useEffect(() => {
     !vacanciesIsLoading &&
       setVacancy(
-        vacancies.data.find(({ VacancyId }) => VacancyId == vacancyId)
+        vacancies.data.find(({ VacancyId }) => VacancyId === vacancyId)
       );
-  }, [vacancyId]);
-
-  useEffect(() => {
-    refetchVacancies();
-    refetchApplications();
-  }, []);
+  }, [vacancyId, vacancies?.data, vacanciesIsLoading]);
 
   useEffect(() => setActive("1"), [setActive]);
 
@@ -152,6 +141,15 @@ const Applications = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleApplicationView = (userId, applicationId) => {
+    navigate("/application", {
+      state: {
+        userId: userId,
+        applicationId: applicationId,
+      },
+    });
   };
 
   return (
@@ -250,7 +248,9 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {dayjs(vacancy?.ClosingDate).format("YYYY-MM-DD")}
+                    {vacancy?.ClosingDate
+                      ? dayjs(vacancy?.ClosingDate).format("YYYY-MM-DD")
+                      : null}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 0 : 1} />
@@ -279,7 +279,11 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {dayjs(vacancy?.PlannedInterViewDate).format("YYYY-MM-DD")}
+                    {vacancy?.PlannedInterViewDate
+                      ? dayjs(vacancy?.PlannedInterViewDate).format(
+                          "YYYY-MM-DD"
+                        )
+                      : null}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 0 : 1} />
@@ -351,7 +355,7 @@ const Applications = () => {
                           key={row.ApplicationId}
                           sx={{ cursor: "pointer" }}
                           onClick={() =>
-                            navigate("/applications/" + row.ApplicationId)
+                            handleApplicationView(row.UserId, row.ApplicationId)
                           }
                         >
                           <TableCell align="left">

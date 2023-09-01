@@ -12,9 +12,11 @@ import {
 } from "@mui/material";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
-import * as api from "../../api";
 import { useSelector } from "react-redux";
-import { useGetMasterDataQuery } from "../../state/api";
+import {
+  useCreateVacancyMutation,
+  useGetMasterDataQuery,
+} from "../../state/api";
 
 const initState = {
   VacancyName: "",
@@ -35,10 +37,12 @@ const initState = {
 const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
   const [setActive] = useOutletContext();
+  const [attachment, setAttachment] = useState(null);
+  const [response, setResponse] = useState();
+  const [createVacancy] = useCreateVacancyMutation();
   const { UserId } = useSelector((state) => state.userContext.data.result);
   const { data: masterData, isLoading: masterDataIsLoading } =
     useGetMasterDataQuery();
-  const [response, setResponse] = useState();
   const [vacancy, setVacancy] = useState({
     ...initState,
     userId: UserId,
@@ -65,6 +69,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
         ).value,
         Status: editingVacancy.Status === "Open" ? "ACT" : "INA",
       });
+    // eslint-disable-next-line
   }, [editingVacancy]);
 
   const handleChange = (e) => {
@@ -76,14 +81,12 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const result = await api.createOrUpdateVacancy(vacancy);
-      setResponse(result);
-    } catch (error) {
-      console.log(error);
-    }
+    const result = await createVacancy(vacancy, attachment);
+    console.log(result);
+    setResponse(result);
+    setVacancy(initState);
     setTimeout(() => {
-      setResponse("");
+      setResponse(null);
     }, 5000);
   };
 
@@ -220,6 +223,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                   name="AdvertismentPath"
                   label="Advertisment :"
                   value={vacancy.AdvertismentPath}
+                  setAttachment={setAttachment}
                   type="file"
                   handleChange={handleChange}
                   inline
@@ -306,6 +310,23 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     </div>
                   )}
                 </Grid>
+                {response && (
+                  <Typography
+                    sx={{
+                      width: "100%",
+                      fontSize: "0.8rem",
+                      m: "1rem",
+                      p: "1rem",
+                      color: response.error ? "#ff0000" : "#12d104",
+                      border: `1px solid ${
+                        response.error ? "#ff0000" : "#12d104"
+                      }`,
+                      borderRadius: "5px",
+                    }}
+                  >
+                    {response.message}
+                  </Typography>
+                )}
               </Grid>
             </Paper>
           </form>

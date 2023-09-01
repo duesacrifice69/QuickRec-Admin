@@ -8,8 +8,17 @@ import {
 } from "@mui/material";
 import { Element } from "react-scroll";
 import DetailCard from "./DetailCard";
+import { useState } from "react";
 
-const ApplicationSection = ({ title, details, children, sx }) => {
+const ApplicationSection = ({
+  title,
+  details,
+  children,
+  isApproved,
+  handleApprove,
+  sx,
+}) => {
+  const [checked, setChecked] = useState(isApproved);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
 
@@ -29,7 +38,18 @@ const ApplicationSection = ({ title, details, children, sx }) => {
         {children}
         {details &&
           details.map((detail, index) => (
-            <DetailCard key={index} detail={detail} />
+            <DetailCard
+              key={index}
+              detail={detail}
+              handleApprove={(e) =>
+                handleApprove(
+                  e,
+                  detail?.eduDetailsId ??
+                    detail?.expDetailId ??
+                    detail?.achvDetailId
+                )
+              }
+            />
           ))}
 
         {!details && (
@@ -40,7 +60,16 @@ const ApplicationSection = ({ title, details, children, sx }) => {
               mr: "5px",
               mb: "10px",
             }}
-            control={<Checkbox size="small" />}
+            control={
+              <Checkbox
+                size="small"
+                checked={checked}
+                onChange={(e) => {
+                  setChecked(e.target.checked);
+                  handleApprove(e);
+                }}
+              />
+            }
             label={
               <Typography fontSize="14px" color={theme.palette.secondary[700]}>
                 Approve

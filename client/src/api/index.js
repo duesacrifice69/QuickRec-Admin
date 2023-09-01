@@ -18,17 +18,3 @@ export const signin = async (loginData) => {
   );
   return response.data;
 };
-
-export const createVacancy = async (vacancyData) => {
-  const response = await API.post("vacancy/createVacancy", vacancyData, config);
-  return response.data;
-};
-export const deleteVacancy = async (vacancyId) => {
-  const response = await API.post(`vacancy/deleteVacancy/${vacancyId}`, config);
-  return response.data;
-};
-
-export const vacancies = async () => {
-  const response = await API.get("vacancy", config);
-  return response.data;
-};

@@ -1,31 +1,23 @@
 import { useTheme } from "@emotion/react";
-import { DescriptionOutlined } from "@mui/icons-material";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import DownloadIcon from "./DownloadIcon";
 
-const FileViewer = ({ label, onClick }) => {
+const FileViewer = ({ label, fileName }) => {
   const theme = useTheme();
   return (
     <Box
       sx={{
         backgroundColor: theme.palette.secondary[100],
-        display: "flex",
         minWidth: "15vw",
-        padding: "0.5rem",
+        p: 0,
         borderRadius: "5px",
+        display: "flex",
         justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       <Typography>{label}</Typography>
-      <IconButton
-        onClick={onClick}
-        sx={{
-          p: 0,
-          height: "24px",
-          color: theme.palette.primary[500],
-        }}
-      >
-        <DescriptionOutlined />
-      </IconButton>
+      <DownloadIcon fileName={fileName} />
     </Box>
   );
 };
