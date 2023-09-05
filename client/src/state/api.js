@@ -62,6 +62,13 @@ export const api = createApi({
       }),
       invalidatesTags: ["Application"],
     }),
+    reviewApplication: builder.mutation({
+      query: ({ applicationId, status, remarks }) => ({
+        url: `/application/reviewed?applicationId=${applicationId}&status=${status}&remarks=${remarks}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Application"],
+    }),
   }),
 });
 
@@ -72,4 +79,5 @@ export const {
   useApproveDetailMutation,
   useCreateVacancyMutation,
   useGetAppDetailsQuery,
+  useReviewApplicationMutation,
 } = api;
