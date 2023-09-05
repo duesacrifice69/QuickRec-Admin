@@ -2,6 +2,7 @@ import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import StepGuide from "../../components/StepGuide";
 import {
   Box,
+  CircularProgress,
   Container,
   Grid,
   Typography,
@@ -15,12 +16,13 @@ import { useEffect, useState } from "react";
 import FileViewer from "../../components/FileViewer";
 import Input from "../../components/Input";
 import {
+  useReviewApplicationMutation,
   useApproveDetailMutation,
   useGetAppDetailsQuery,
 } from "../../state/api";
 
 const initState = {
-  status: "pending",
+  status: "PENDING",
   remarks: "",
 };
 
@@ -29,15 +31,16 @@ const Application = () => {
   const [application, setApplication] = useState(initState);
   const [setActive] = useOutletContext();
   const [approveDetail] = useApproveDetailMutation();
+  const [reviewApplication] = useReviewApplicationMutation();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const location = useLocation();
   const params = location?.state;
   const navigate = useNavigate();
-  const { data: applicationData, isLoading: applicationsIsLoading } =
+  const { data: applicationData, isLoading: applicationIsLoading } =
     useGetAppDetailsQuery(params);
   const { basicDetails, education, experience, otherDetails } =
-    !applicationsIsLoading && applicationData?.data;
+    !applicationIsLoading && applicationData?.data;
 
   useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
@@ -45,6 +48,14 @@ const Application = () => {
       navigate("/home");
     }
   }, [navigate, params]);
+
+  useEffect(() => {
+    !applicationIsLoading &&
+      setApplication({
+        status: basicDetails.Status,
+        remarks: basicDetails.Remarks,
+      });
+  }, [applicationIsLoading, basicDetails]);
 
   const handleChange = (e) => {
     setApplication({
@@ -63,7 +74,12 @@ const Application = () => {
   };
 
   const handleSave = () => {
-    navigate("/home");
+    reviewApplication({
+      applicationId: params.applicationId,
+      status: application.status,
+      remarks: application.remarks,
+    });
+    // navigate("/home");
   };
 
   return (
@@ -72,9 +88,10 @@ const Application = () => {
         backgroundColor: theme.palette.background.main,
         pr: "10px",
         pb: "2rem",
+        minHeight: "80vh",
       }}
     >
-      {applicationData && (
+      {applicationData && !applicationIsLoading ? (
         <Container maxWidth="lg">
           <Box
             sx={{
@@ -276,21 +293,27 @@ const Application = () => {
                   </Grid>
                 </Grid>
               </ApplicationSection>
-              <ApplicationSection
-                title="Educational Qualification"
-                details={education}
-                handleApprove={(e, detailId) => handleApprove(e, 2, detailId)}
-              />
-              <ApplicationSection
-                title="Professional Experience"
-                details={experience}
-                handleApprove={(e, detailId) => handleApprove(e, 3, detailId)}
-              />
-              <ApplicationSection
-                title="Other Achievements"
-                details={otherDetails}
-                handleApprove={(e, detailId) => handleApprove(e, 4, detailId)}
-              />
+              {education && (
+                <ApplicationSection
+                  title="Educational Qualification"
+                  details={education}
+                  handleApprove={(e, detailId) => handleApprove(e, 2, detailId)}
+                />
+              )}
+              {experience && (
+                <ApplicationSection
+                  title="Professional Experience"
+                  details={experience}
+                  handleApprove={(e, detailId) => handleApprove(e, 3, detailId)}
+                />
+              )}
+              {otherDetails && (
+                <ApplicationSection
+                  title="Other Achievements"
+                  details={otherDetails}
+                  handleApprove={(e, detailId) => handleApprove(e, 4, detailId)}
+                />
+              )}
               <ButtonComp
                 sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
                 onClick={() => setActiveStep(4)}
@@ -320,11 +343,11 @@ const Application = () => {
                     justifyContent: "space-around",
                   }}
                 >
-                  <FileViewer label="CV" fileName={application?.cv} />
-                  <FileViewer label="NIC" fileName={application?.nic} />
+                  <FileViewer label="CV" fileName={basicDetails?.CVPath} />
+                  <FileViewer label="NIC" fileName={basicDetails?.NICPath} />
                   <FileViewer
                     label="Birth Certificate"
-                    fileName={application?.bc}
+                    fileName={basicDetails?.BCPath}
                   />
                 </Box>
                 <Grid container spacing={5} sx={{ p: "2rem" }}>
@@ -339,9 +362,9 @@ const Application = () => {
                       value={application.status}
                       handleChange={handleChange}
                       options={[
-                        { value: "approve", text: "Approve" },
-                        { value: "reject", text: "Reject" },
-                        { value: "pending", text: "Pending" },
+                        { value: "SELECTED", text: "Selected" },
+                        { value: "REJECTED", text: "Rejected" },
+                        { value: "PENDING", text: "Pending" },
                       ]}
                     />
                   </Grid>
@@ -377,6 +400,10 @@ const Application = () => {
             <StepGuide activeStep={activeStep} setActiveStep={setActiveStep} />
           </Box>
         </Container>
+      ) : (
+        <div style={{ width: "min-content", margin: "auto" }}>
+          <CircularProgress size="5rem" />
+        </div>
       )}
     </Box>
   );
