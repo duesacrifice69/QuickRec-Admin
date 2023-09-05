@@ -104,6 +104,7 @@ const columns = [
   { id: "vacancy", label: "Vacancy", align: "center" },
   { id: "phoneNo", label: "Phone No", align: "center" },
   { id: "date", label: "Date", align: "center" },
+  { id: "status", label: "Status", align: "center" },
 ];
 
 const Applications = () => {
@@ -367,6 +368,10 @@ const Applications = () => {
                           <TableCell align="center">{row.MobileNo1}</TableCell>
                           <TableCell align="center">
                             {dayjs(row.AppliedDate).format("YYYY-MM-DD")}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.Status.charAt(0) +
+                              row.Status.slice(1).toLowerCase()}
                           </TableCell>
                         </TableRow>
                       ))}
