@@ -7,6 +7,7 @@ import {
   useTheme,
   useMediaQuery,
   IconButton,
+  Chip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "./DownloadIcon";
@@ -35,16 +36,16 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
           fontSize: (isMobile) => (isMobile ? "0.8rem" : "1rem"),
         }}
         action={
-          <Typography
-            fontSize={isMobile ? "14px" : "16px"}
+          <Chip
+            label={vacancy.Status}
+            variant="outlined"
+            color={vacancy.Status === "Open" ? "primary" : "error"}
             sx={{
-              lineHeight: "3.3",
-              pr: "10px",
-              color: (theme) => theme.palette.secondary[800],
+              fontWeight: 500,
+              mr: "10px",
+              mt: "10px",
             }}
-          >
-            {vacancy.Status}
-          </Typography>
+          />
         }
       />
       <CardContent sx={{ "&:last-child": { pb: "10px" } }}>
