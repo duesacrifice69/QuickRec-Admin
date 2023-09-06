@@ -19,8 +19,15 @@ import {
   useMediaQuery,
   CircularProgress,
   Chip,
+  Dialog,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import dayjs from "dayjs";
@@ -105,11 +112,15 @@ const columns = [
   { id: "vacancy", label: "Vacancy", align: "center" },
   { id: "phoneNo", label: "Phone No", align: "center" },
   { id: "date", label: "Date", align: "center" },
-  { id: "status", label: "Status", align: "center" },
+  { id: "status", label: "Status", align: "center", filter: true },
 ];
+
+const statusList = ["All", "Selected", "Rejected", "Pending"];
 
 const Applications = () => {
   const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState("ALL");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [vacancyId, setVacancyId] = useState(undefined);
   const [vacancy, setVacancy] = useState(null);
@@ -131,7 +142,9 @@ const Applications = () => {
 
   useEffect(() => setActive("1"), [setActive]);
 
-  const rows = allApplications?.data ?? [];
+  const allRows = allApplications?.data ?? [];
+  const rows =
+    status === "ALL" ? allRows : allRows.filter((row) => row.Status === status);
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -152,6 +165,13 @@ const Applications = () => {
         applicationId: applicationId,
       },
     });
+  };
+
+  const handleFilterOpen = () => {
+    setOpen(true);
+  };
+  const handleFilterClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -330,6 +350,20 @@ const Applications = () => {
                         {column.label}
                       </TableCell>
                     ))}
+                    <TableCell
+                      style={{
+                        width: "min-content",
+                        padding: 0,
+                        margin: 0,
+                      }}
+                    >
+                      <IconButton
+                        onClick={handleFilterOpen}
+                        sx={{ marginLeft: "-40px" }}
+                      >
+                        <FilterAltIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 {applicationsIsLoading ? (
@@ -424,6 +458,34 @@ const Applications = () => {
               </Table>
             </Grid>
           </Grid>
+
+          <Dialog onClose={handleFilterClose} open={open}>
+            <DialogTitle>Filter: Application Status</DialogTitle>
+            <List
+              sx={{
+                "& li>div": {
+                  borderBottom: (theme) =>
+                    "1px solid " + theme.palette.secondary[600],
+                },
+                "& li:last-child>div": {
+                  borderBottom: "none",
+                },
+              }}
+            >
+              {statusList.map((status, i) => (
+                <ListItem key={i} sx={{ pt: 0, pb: 0 }}>
+                  <ListItemButton
+                    onClick={() => {
+                      setStatus(status.toUpperCase());
+                      handleFilterClose();
+                    }}
+                  >
+                    <ListItemText primary={status} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Dialog>
         </Paper>
       </Container>
     </Box>
