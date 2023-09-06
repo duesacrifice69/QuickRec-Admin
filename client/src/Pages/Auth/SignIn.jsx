@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getUserDataOnSuccess, getUserDataOnFailiure } from "../../state/Auth";
 import * as api from "../../api/";
+import Error from "../../components/Error";
 
 const initState = { userName: "", password: "" };
 
@@ -13,7 +14,7 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState(initState);
-  const [error, setError] = useState("");
+  const [error, setError] = useState();
   const navigate = useNavigate();
 
   const handleShowPassowrd = () => {
@@ -36,9 +37,6 @@ const SignIn = () => {
       dispatch(getUserDataOnFailiure(error.response.data));
       setError(error.response.data);
       console.log(error.response.data);
-      setTimeout(() => {
-        setError("");
-      }, 5000);
     }
   };
 
@@ -80,21 +78,10 @@ const SignIn = () => {
                 Sign In
               </ButtonComp>
             </Grid>
+            <Grid item xs={12}>
+              <Error error={error} setError={setError} />
+            </Grid>
           </Grid>
-          {error && (
-            <Typography
-              sx={{
-                fontSize: "0.8rem",
-                m: "1rem",
-                p: "1rem",
-                color: "#ff0000",
-                border: "1px solid red",
-                borderRadius: "5px",
-              }}
-            >
-              {error.message}
-            </Typography>
-          )}
         </form>
       </Paper>
     </Container>

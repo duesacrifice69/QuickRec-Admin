@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -17,6 +17,7 @@ import {
   useCreateVacancyMutation,
   useGetMasterDataQuery,
 } from "../../state/api";
+import Error from "../../components/Error";
 
 const initState = {
   VacancyName: "",
@@ -36,9 +37,10 @@ const initState = {
 
 const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [setActive] = useOutletContext();
   const [attachment, setAttachment] = useState(null);
-  const [response, setResponse] = useState();
+  const [error, setError] = useState();
   const [createVacancy] = useCreateVacancyMutation();
   const { UserId } = useSelector((state) => state.userContext.data.result);
   const { data: masterData, isLoading: masterDataIsLoading } =
@@ -85,12 +87,11 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
       createReq: vacancy,
       attachment: attachment,
     });
-    setResponse(result);
-    setVacancy(initState);
-    setTimeout(() => {
-      setResponse(null);
-      isEditing && handleCancel();
-    }, 5000);
+    if (result.error) {
+      setError(result.error?.data);
+    } else {
+      isEditing ? handleCancel() : navigate("/vacancies");
+    }
   };
 
   const handleCancel = () => setIsEditing(false);
@@ -313,23 +314,9 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     </div>
                   )}
                 </Grid>
-                {response && (
-                  <Typography
-                    sx={{
-                      width: "100%",
-                      fontSize: "0.8rem",
-                      m: "1rem",
-                      p: "1rem",
-                      color: response.data ? "#12d104" : "#ff0000",
-                      border: `1px solid ${
-                        response.data ? "#12d104" : "#ff0000"
-                      }`,
-                      borderRadius: "5px",
-                    }}
-                  >
-                    {response?.data?.message ?? response?.error?.data?.message}
-                  </Typography>
-                )}
+                <Grid item xs={12}>
+                  <Error error={error} setError={setError} />
+                </Grid>
               </Grid>
             </Paper>
           </form>

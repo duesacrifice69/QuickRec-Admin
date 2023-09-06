@@ -20,6 +20,7 @@ import {
   useApproveDetailMutation,
   useGetAppDetailsQuery,
 } from "../../state/api";
+import Error from "../../components/Error";
 
 const initState = {
   status: "PENDING",
@@ -29,6 +30,7 @@ const initState = {
 const Application = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [application, setApplication] = useState(initState);
+  const [error, setError] = useState();
   const [setActive] = useOutletContext();
   const [approveDetail] = useApproveDetailMutation();
   const [reviewApplication] = useReviewApplicationMutation();
@@ -53,7 +55,7 @@ const Application = () => {
     !applicationIsLoading &&
       setApplication({
         status: basicDetails.Status,
-        remarks: basicDetails.Remarks,
+        remarks: basicDetails.Remarks ?? "",
       });
   }, [applicationIsLoading, basicDetails]);
 
@@ -73,13 +75,13 @@ const Application = () => {
     });
   };
 
-  const handleSave = () => {
-    reviewApplication({
+  const handleSave = async () => {
+    const result = await reviewApplication({
       applicationId: params.applicationId,
       status: application.status,
       remarks: application.remarks,
     });
-    // navigate("/home");
+    result?.error ? setError(result.error?.data) : navigate("/home");
   };
 
   return (
@@ -393,6 +395,9 @@ const Application = () => {
                     >
                       Save
                     </ButtonComp>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Error error={error} setError={setError} />
                   </Grid>
                 </Grid>
               </ApplicationSection>
