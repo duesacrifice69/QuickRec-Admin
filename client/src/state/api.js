@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }),
   reducerPath: "adminApi",
-  tagTypes: ["Vacancy", "Application", "Applications", "Master", "uploadDocs"],
+  tagTypes: ["Vacancy", "Application", "Applications", "Master"],
   endpoints: (builder) => ({
     getApplicationsByVacancy: builder.query({
       query: (vacancyId) =>
@@ -67,7 +67,7 @@ export const api = createApi({
         url: `/application/reviewed?applicationId=${applicationId}&status=${status}&remarks=${remarks}`,
         method: "POST",
       }),
-      invalidatesTags: ["Application"],
+      invalidatesTags: ["Application", "Applications"],
     }),
   }),
 });
