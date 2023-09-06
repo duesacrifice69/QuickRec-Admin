@@ -16,7 +16,7 @@ const FileViewer = ({ label, fileName }) => {
         alignItems: "center",
       }}
     >
-      <Typography>{label}</Typography>
+      <Typography sx={{ pl: "0.5rem" }}>{label}</Typography>
       <DownloadIcon fileName={fileName} />
     </Box>
   );
