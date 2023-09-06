@@ -18,6 +18,7 @@ import {
   Typography,
   useMediaQuery,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -370,8 +371,20 @@ const Applications = () => {
                             {dayjs(row.AppliedDate).format("YYYY-MM-DD")}
                           </TableCell>
                           <TableCell align="center">
-                            {row.Status.charAt(0) +
-                              row.Status.slice(1).toLowerCase()}
+                            <Chip
+                              sx={{
+                                backgroundColor:
+                                  row.Status === "REJECTED"
+                                    ? "#e57373"
+                                    : row.Status === "SELECTED"
+                                    ? "#81c784"
+                                    : "#f7cb73",
+                              }}
+                              label={
+                                row.Status.charAt(0) +
+                                row.Status.slice(1).toLowerCase()
+                              }
+                            />
                           </TableCell>
                         </TableRow>
                       ))}
