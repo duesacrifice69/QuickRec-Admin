@@ -241,7 +241,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {rows.length}
+                    {vacancy?.NoOfApplicants}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 0 : 1} />
@@ -256,7 +256,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {rows.length}
+                    {vacancy?.NoOfSelectedApplicants}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 9.5 : 4}>
@@ -287,7 +287,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {rows.length}
+                    {vacancy?.NoOfRejectedApplicants}
                   </Typography>
                 </Grid>
                 <Grid item xs={isMobile ? 9.5 : 4}>
@@ -320,7 +320,7 @@ const Applications = () => {
                   <Typography
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
-                    {rows.length}
+                    {vacancy?.NoOfPendingApplicants}
                   </Typography>
                 </Grid>
               </Grid>
