@@ -9,6 +9,7 @@ export const api = createApi({
       query: (vacancyId) =>
         `/application/allApplications?vacancyId=${vacancyId ?? 0}`,
       providesTags: ["Applications"],
+      invalidatesTags: ["Vacancy"],
     }),
     getVacancyBySearch: builder.query({
       query: (searchQuery) => `/vacancy/search/?searchQuery=${searchQuery}`,
@@ -67,7 +68,7 @@ export const api = createApi({
         url: `/application/reviewed?applicationId=${applicationId}&status=${status}&remarks=${remarks}`,
         method: "POST",
       }),
-      invalidatesTags: ["Application", "Applications"],
+      invalidatesTags: ["Application", "Applications", "Vacancy"],
     }),
   }),
 });
