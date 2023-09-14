@@ -195,13 +195,24 @@ const Input = ({
           //*---------------------- Other Inputs ---------------------- */
           <TextField
             name={name}
-            value={!value && type === "file" ? "Choose a file" : value}
+            value={
+              !value && type === "file"
+                ? "Choose a file"
+                : name.startsWith("mobileNo")
+                ? value.replace("+94", "")
+                : value
+            }
             onChange={(e) => {
               name.startsWith("mobileNo")
                 ? // moblie No inputs
                   (Number(e.target.value) || e.target.value === "") &&
                   e.target.value.length < 10 &&
-                  handleChange(e)
+                  handleChange({
+                    target: {
+                      name: name,
+                      value: "+94" + e.target.value,
+                    },
+                  })
                 : type === "number"
                 ? // number inputs
                   handleChange({
