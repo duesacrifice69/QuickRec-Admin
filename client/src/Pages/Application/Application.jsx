@@ -130,7 +130,7 @@ const Application = () => {
                         fontWeight: 600,
                       }}
                     >
-                      {basicDetails.title}. {basicDetails.nameWithInitials}
+                      {basicDetails.title} {basicDetails.nameWithInitials}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
