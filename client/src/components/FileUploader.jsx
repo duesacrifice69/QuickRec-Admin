@@ -3,6 +3,7 @@ import ButtonComp from "./ButtonComp";
 const FileUploader = ({
   name,
   handleChange,
+  fileName,
   setAttachment,
   setError,
   required,
@@ -56,7 +57,7 @@ const FileUploader = ({
           width: "1px",
           position: "absolute",
         }}
-        required={required}
+        required={!fileName && required}
       />
     </>
   );
