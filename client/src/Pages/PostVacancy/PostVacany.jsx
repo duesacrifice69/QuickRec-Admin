@@ -328,9 +328,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                         </div>
                       )}
                     </Grid>
-                    <Grid item xs={12}>
-                      <Error error={error} setError={setError} />
-                    </Grid>
+                    <Error error={error} setError={setError} />
                   </Grid>
                 </Paper>
               </Container>

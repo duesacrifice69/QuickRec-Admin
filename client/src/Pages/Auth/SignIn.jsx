@@ -78,9 +78,7 @@ const SignIn = () => {
                 Sign In
               </ButtonComp>
             </Grid>
-            <Grid item xs={12}>
-              <Error error={error} setError={setError} />
-            </Grid>
+            <Error error={error} setError={setError} />
           </Grid>
         </form>
       </Paper>
