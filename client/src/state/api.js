@@ -1,7 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL,prepareHeaders: (headers) => {
+    headers.set("authorization", localStorage.getItem("profile"));
+    return headers;
+  }, }),
+  
   reducerPath: "adminApi",
   tagTypes: ["Vacancy", "Application", "Applications", "Master"],
   endpoints: (builder) => ({
