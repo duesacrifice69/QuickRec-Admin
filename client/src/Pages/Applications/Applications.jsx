@@ -100,7 +100,7 @@ const Applications = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.primary.main, pb: "3rem" }}>
+    <Box sx={{ backgroundColor: theme.palette.background.main, pb: "3rem" }}>
       <Container maxWidth="lg">
         <Paper sx={{ p: "3rem 3vw" }}>
           <Grid

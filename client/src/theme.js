@@ -29,7 +29,7 @@ const theme = createTheme({
       main: "#F9F9F9",
     },
     background: {
-      main: "#F7F7F7",
+      main: "#F6F8FB",
     },
   },
 });
