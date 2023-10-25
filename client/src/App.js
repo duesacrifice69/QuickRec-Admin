@@ -16,6 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Applications from "./Pages/Applications/Applications";
 import PostVacancy from "./Pages/PostVacancy/PostVacany";
 import Application from "./Pages/Application/Application";
+import Dashboard from "./Pages/Dashboard/Dashboard";
 
 function App() {
   const user = useSelector((state) => state.userContext.data?.result);
@@ -30,7 +31,8 @@ function App() {
         </Route>
         <Route element={user ? <Layout /> : <Navigate to="/signIn" replace />}>
           <Route path="/*" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Applications />} />
+          <Route path="/home" element={<Dashboard />} />
+          <Route path="/applications" element={<Applications />} />
           <Route path="/application" element={<Application />} />
           <Route path="/vacancies" element={<VacancyList />} />
           <Route path="/postVacancy" element={<PostVacancy />} />
