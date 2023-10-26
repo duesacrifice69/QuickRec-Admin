@@ -6,7 +6,6 @@ import {
   Box,
   IconButton,
   ListItem,
-  Typography,
   Drawer,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -62,17 +61,22 @@ const Navbar = ({
     navigateTo && navigate(navigateTo);
   };
   return (
-    <div style={{ backgroundColor: theme.palette.background.main }}>
+    <div
+      style={{
+        backgroundColor: theme.palette.background.main,
+        paddingBottom: "2rem",
+      }}
+    >
       <AppBar
         sx={{
           position: "static",
           boxShadow: "none",
           display: "flex",
           justifyContent: "center",
-          alignItems: isNonMobile ? "flex-end" : "flex-start",
+          alignItems: "flex-start",
           maxHeight: isNonMobile ? "50px" : "40px",
           width: "100%",
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.primary[500],
         }}
       >
         <Toolbar
@@ -181,36 +185,22 @@ const Navbar = ({
             </Box>
           ) : (
             <Box component="nav">
-              <List sx={{ display: "flex" }}>
-                <ListItem role="none">
+              <List
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ display: "flex" }}>
                   <ListItemStyle
-                    key="1"
+                    index="1"
+                    active={active}
                     onClick={(e) => handleClick(e, "/home")}
-                    sx={{
-                      borderBottom: `5px solid ${
-                        active === "1"
-                          ? theme.palette.primary[500]
-                          : theme.palette.secondary.main
-                      }`,
-                    }}
                   >
                     Home
                   </ListItemStyle>
-                </ListItem>
 
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="2"
-                    onClick={() => {}}
-                    sx={{
-                      padding: 0,
-                      borderBottom: `5px solid ${
-                        active === "2"
-                          ? theme.palette.primary[500]
-                          : theme.palette.secondary.main
-                      }`,
-                    }}
-                  >
+                  <ListItemStyle index="2" active={active} onClick={() => {}}>
                     <Button
                       id="fade-button"
                       aria-controls={open ? "fade-menu" : undefined}
@@ -248,52 +238,23 @@ const Navbar = ({
                       </MenuItem>
                     </Menu>
                   </ListItemStyle>
-                </ListItem>
+                </span>
+                <ListItemStyle index="3" active={active} onClick={() => {}}>
+                  {user?.result?.UserName.split(" ")[0]}
+                </ListItemStyle>
 
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="3"
-                    onClick={() => {}}
-                    sx={{
-                      borderBottom: `5px solid ${
-                        active === "3"
-                          ? theme.palette.primary[500]
-                          : theme.palette.secondary.main
-                      }`,
-                    }}
-                  >
-                    Profile
-                  </ListItemStyle>
-                </ListItem>
-
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="4"
-                    onClick={() => handleLogOut()}
-                    sx={{
-                      borderBottom: `5px solid ${
-                        active === "4"
-                          ? theme.palette.primary[500]
-                          : theme.palette.secondary.main
-                      }`,
-                      width: "max-content",
-                    }}
-                  >
-                    Log out
-                  </ListItemStyle>
-                </ListItem>
+                {/* <ListItemStyle
+                  index="4"
+                  active={active}
+                  onClick={() => handleLogOut()}
+                >
+                  Log out
+                </ListItemStyle> */}
               </List>
             </Box>
           )}
         </Toolbar>
       </AppBar>
-      <div
-        style={{
-          margin: "10px 20px 0 20px",
-        }}
-      >
-        <Typography>Welcome {user?.result?.UserName} !</Typography>
-      </div>
     </div>
   );
 };
