@@ -12,7 +12,7 @@ const CountUpCard = ({ count, title }) => {
         borderBottomLeftRadius: "30px",
         width: "200px",
         textAlign: "center",
-        padding: "1rem",
+        padding: "1rem 0.75rem",
         boxShadow: (theme) => `10px 10px 10px ${theme.palette.secondary.main}`,
       }}
     >
@@ -23,9 +23,9 @@ const CountUpCard = ({ count, title }) => {
           fontSize: "2rem",
         }}
         end={count}
-        delay={1}
+        delay={0}
       />
-      <Typography sx={{ fontWeight: 500 }}>{title}</Typography>
+      <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
     </Box>
   );
 };
