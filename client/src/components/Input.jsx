@@ -175,9 +175,6 @@ const Input = ({
               value={value}
               onChange={handleChange}
               required={required}
-              MenuProps={{
-                disableScrollLock: true,
-              }}
               sx={{
                 minWidth: "140px",
                 minHeight: "1.4rem",
