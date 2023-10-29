@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import logo from "../Assets/WB_Logo.png";
 import AdminPortalBanner from "../components/AdminPortalBanner";
 import Navbar from "../components/Navbar";
+import ScrollTop from "../components/ScrollTop";
 
 const Layout = ({ auth }) => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
@@ -39,6 +40,7 @@ const Layout = ({ auth }) => {
       </Box>
       <Box>
         <Outlet context={[setActive]} />
+        <ScrollTop />
       </Box>
     </Box>
   );
