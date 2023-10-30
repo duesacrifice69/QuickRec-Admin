@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -49,7 +49,6 @@ const Applications = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [vacancyId, setVacancyId] = useState(undefined);
   const [vacancy, setVacancy] = useState(null);
-  const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
@@ -64,8 +63,6 @@ const Applications = () => {
         vacancies.data.find(({ VacancyId }) => VacancyId === vacancyId)
       );
   }, [vacancyId, vacancies?.data, vacanciesIsLoading]);
-
-  useEffect(() => setActive("1"), [setActive]);
 
   const allRows = allApplications?.data ?? [];
   const rows =
