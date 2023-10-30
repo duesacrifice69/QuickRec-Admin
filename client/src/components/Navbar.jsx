@@ -5,8 +5,8 @@ import {
   List,
   Box,
   IconButton,
-  ListItem,
   Drawer,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -16,12 +16,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "../state/Auth";
 import { useDispatch } from "react-redux";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Fade from "@mui/material/Fade";
 import { isTokenExpired } from "../utils/userValidation";
 import { api } from "../state/api";
+import { Group, House } from "@mui/icons-material";
+import ProfilePic from "./ProfilePic";
 
 const Navbar = ({
   active,
@@ -34,7 +32,6 @@ const Navbar = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(false);
-  const open = Boolean(anchorEl);
   const user = useSelector((state) => state.userContext.data);
 
   const container =
@@ -60,6 +57,7 @@ const Navbar = ({
     !isNonMobile && setIsSidebarOpen(false);
     navigateTo && navigate(navigateTo);
   };
+
   return (
     <div
       style={{
@@ -68,8 +66,8 @@ const Navbar = ({
       }}
     >
       <AppBar
+        position="static"
         sx={{
-          position: "static",
           boxShadow: "none",
           display: "flex",
           justifyContent: "center",
@@ -80,20 +78,40 @@ const Navbar = ({
         }}
       >
         <Toolbar
+          id="nav"
           sx={{
             alignItems: "center",
             display: "flex",
+            width: "100%",
           }}
         >
           {!isNonMobile ? (
-            <Box>
-              <IconButton
-                onClick={() => {
-                  setIsSidebarOpen(!isSidebarOpen);
+            <Box sx={{ width: "100%" }}>
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "space-between",
                 }}
               >
-                <MenuIcon />
-              </IconButton>
+                <IconButton
+                  onClick={() => {
+                    setIsSidebarOpen(!isSidebarOpen);
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <ListItemStyle
+                  index="3"
+                  active={active}
+                  subMenu={[
+                    { name: "User Profile", onClick: () => {} },
+                    { name: "Log Out", onClick: handleLogOut },
+                  ]}
+                >
+                  <ProfilePic name={user?.result?.UserName} />
+                </ListItemStyle>
+              </div>
               <Drawer
                 container={container}
                 variant="temporary"
@@ -106,150 +124,107 @@ const Navbar = ({
                   keepMounted: true, // Better open performance on mobile.
                 }}
                 sx={{
-                  display: { xs: "block", sm: "none" },
                   "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
-                    backgroundColor: theme.palette.secondary.main,
+                    backgroundColor: theme.palette.primary[500],
                   },
                 }}
               >
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="1"
-                    sx={{ fontWeight: 400, fontSize: "1rem" }}
-                    onClick={(e) => handleClick(e, "/home")}
-                  >
-                    Home
-                  </ListItemStyle>
-                </ListItem>
+                <ListItemStyle
+                  index="1"
+                  onClick={(e) => handleClick(e, "/home")}
+                >
+                  Home
+                </ListItemStyle>
 
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="2"
-                    sx={{ fontWeight: 400, fontSize: "1rem" }}
-                    onClick={handleMenuClick}
-                  >
-                    Vacancy
-                    <KeyboardArrowDownIcon sx={{ pl: "5px" }} />
-                  </ListItemStyle>
-                </ListItem>
+                <ListItemStyle index="2" onClick={handleMenuClick}>
+                  Vacancy
+                  <KeyboardArrowDownIcon sx={{ pl: "5px" }} />
+                </ListItemStyle>
                 {anchorEl && (
-                  <span
-                    style={{ backgroundColor: theme.palette.secondary[400] }}
-                  >
-                    <ListItem role="none">
-                      <ListItemStyle
-                        key="3"
-                        sx={{ fontWeight: 400, fontSize: "1rem" }}
-                        onClick={(e) => handleClick(e, "/postVacancy")}
-                      >
-                        Post Vacancy
-                      </ListItemStyle>
-                    </ListItem>
-                    <ListItem role="none">
-                      <ListItemStyle
-                        key="4"
-                        sx={{ fontWeight: 400, fontSize: "1rem" }}
-                        onClick={(e) => handleClick(e, "/vacancies")}
-                      >
-                        All Vacancies
-                      </ListItemStyle>
-                    </ListItem>
-                  </span>
+                  <div style={{ backgroundColor: theme.palette.primary[400] }}>
+                    <ListItemStyle
+                      index="3"
+                      onClick={(e) => handleClick(e, "/postVacancy")}
+                    >
+                      Post Vacancy
+                    </ListItemStyle>
+                    <ListItemStyle
+                      index="4"
+                      onClick={(e) => handleClick(e, "/vacancies")}
+                    >
+                      All Vacancies
+                    </ListItemStyle>
+                  </div>
                 )}
-
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="5"
-                    sx={{ fontWeight: 400, fontSize: "1rem" }}
-                    onClick={handleClick}
-                  >
-                    Profile
-                  </ListItemStyle>
-                </ListItem>
-
-                <ListItem role="none">
-                  <ListItemStyle
-                    key="6"
-                    onClick={handleLogOut}
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: "1rem",
-                      width: "max-content",
-                    }}
-                  >
-                    Log out
-                  </ListItemStyle>
-                </ListItem>
               </Drawer>
             </Box>
           ) : (
-            <Box component="nav">
+            <Box
+              component="nav"
+              sx={{
+                width: "100%",
+              }}
+            >
               <List
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
+                  width: "100%",
                 }}
               >
-                <span style={{ display: "flex" }}>
+                <div style={{ display: "flex" }}>
                   <ListItemStyle
                     index="1"
                     active={active}
                     onClick={(e) => handleClick(e, "/home")}
                   >
+                    <House sx={{ mr: "0.5rem" }} />
                     Home
                   </ListItemStyle>
 
-                  <ListItemStyle index="2" active={active} onClick={() => {}}>
-                    <Button
-                      id="fade-button"
-                      aria-controls={open ? "fade-menu" : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? "true" : undefined}
-                      onClick={handleMenuClick}
-                      sx={{
-                        padding: "0 16px 0 16px",
-                        color: "inherit",
-                        fontFamily: "inherit",
-                        textTransform: "inherit",
-                        fontSize: "inherit",
-                        fontWeight: "inherit",
-                      }}
-                      endIcon={<KeyboardArrowDownIcon />}
-                    >
-                      Vacancy
-                    </Button>
-                    <Menu
-                      id="fade-menu"
-                      disableScrollLock={true}
-                      MenuListProps={{
-                        "aria-labelledby": "fade-button",
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={(e) => handleClick(e)}
-                      TransitionComponent={Fade}
-                    >
-                      <MenuItem onClick={(e) => handleClick(e, "/postVacancy")}>
-                        Post Vacancy
-                      </MenuItem>
-                      <MenuItem onClick={(e) => handleClick(e, "/vacancies")}>
-                        All Vacancies
-                      </MenuItem>
-                    </Menu>
+                  <ListItemStyle
+                    index="2"
+                    active={active}
+                    subMenu={[
+                      {
+                        name: "Post Vacancy",
+                        onClick: (e) => handleClick(e, "/postVacancy"),
+                      },
+                      {
+                        name: "All Vacancies",
+                        onClick: (e) => handleClick(e, "/vacancies"),
+                      },
+                    ]}
+                  >
+                    <Group sx={{ mr: "0.5rem" }} />
+                    Vacancy
                   </ListItemStyle>
-                </span>
-                <ListItemStyle index="3" active={active} onClick={() => {}}>
-                  {user?.result?.UserName.split(" ")[0]}
-                </ListItemStyle>
-
-                {/* <ListItemStyle
-                  index="4"
+                </div>
+                <ListItemStyle
+                  index="3"
                   active={active}
-                  onClick={() => handleLogOut()}
+                  subMenu={[
+                    { name: "User Profile", onClick: () => {} },
+                    { name: "Log Out", onClick: handleLogOut },
+                  ]}
                 >
-                  Log out
-                </ListItemStyle> */}
+                  <ProfilePic name={user?.result?.UserName} />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "center",
+                    }}
+                  >
+                    <Typography fontWeight={600}>
+                      {user?.result?.UserName.split(" ")[0]}
+                    </Typography>
+                    <Typography fontSize={"0.7rem"}>
+                      {user?.result?.UserRole}
+                    </Typography>
+                  </div>
+                </ListItemStyle>
               </List>
             </Box>
           )}

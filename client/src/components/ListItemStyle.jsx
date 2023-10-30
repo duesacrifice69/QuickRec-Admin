@@ -1,31 +1,68 @@
-import { useTheme } from "@emotion/react";
-import { ListItem, ListItemButton } from "@mui/material";
+import { KeyboardArrowDown } from "@mui/icons-material";
+import { Fade, ListItem, ListItemButton, Menu, MenuItem } from "@mui/material";
+import { useState } from "react";
 
-const ListItemStyle = ({ index, active, onClick, children }) => {
-  const theme = useTheme();
+const ListItemStyle = ({ index, active, onClick, subMenu, children }) => {
+  const [anchorEl, setAnchorEl] = useState(false);
+  const open = Boolean(anchorEl);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = (event) => {
+    event.stopPropagation();
+    setAnchorEl(null);
+  };
+
   return (
-    <ListItem role="none">
+    <ListItem
+      role="none"
+      sx={{
+        width: "max-content",
+      }}
+    >
       <ListItemButton
-        onClick={onClick}
+        onClick={(e) => {
+          subMenu ? handleMenuClick(e) : onClick(e);
+        }}
         sx={{
           textDecoration: "none",
-          width: "max-content",
+          position: "relative",
           height: "50px",
           boxSizing: "border-box",
-          color: "#ffffff",
-          fontWeight: 600,
-          fontSize: "20px",
+          color: (theme) =>
+            active === index ? theme.palette.primary[100] : "#ffffff",
+          fontWeight: { sm: 600, xs: 400 },
+          fontSize: { sm: "1.25rem", xs: "1rem" },
           "&:hover": {
             transition: "0.5s all ease-in-out",
             bakcground: "none",
-            borderBottom: `5px solid #ffffff`,
           },
-          borderBottom: `5px solid ${
-            active === index ? "#ffffff" : theme.palette.primary[500]
-          }`,
         }}
       >
         {children}
+        {subMenu && <KeyboardArrowDown fontSize="20px" sx={{ ml: "0.5rem" }} />}
+        {subMenu && (
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            TransitionComponent={Fade}
+          >
+            {subMenu.map((item, i) => (
+              <MenuItem
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(null);
+                  item.onClick(e);
+                }}
+              >
+                {item.name}
+              </MenuItem>
+            ))}
+          </Menu>
+        )}
       </ListItemButton>
     </ListItem>
   );
