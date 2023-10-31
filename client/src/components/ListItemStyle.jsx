@@ -2,7 +2,7 @@ import { KeyboardArrowDown } from "@mui/icons-material";
 import { Fade, ListItem, ListItemButton, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 
-const ListItemStyle = ({ index, active, onClick, subMenu, children }) => {
+const ListItemStyle = ({ index, icon, active, onClick, subMenu, children }) => {
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
 
@@ -40,6 +40,8 @@ const ListItemStyle = ({ index, active, onClick, subMenu, children }) => {
           },
         }}
       >
+        {icon}
+        {icon && <div style={{ width: "0.5rem" }}></div>}
         {children}
         {subMenu && <KeyboardArrowDown fontSize="20px" sx={{ ml: "0.5rem" }} />}
         {subMenu && (
@@ -58,6 +60,8 @@ const ListItemStyle = ({ index, active, onClick, subMenu, children }) => {
                   item.onClick(e);
                 }}
               >
+                {item?.icon}
+                {item?.icon && <div style={{ width: "0.5rem" }}></div>}
                 {item.name}
               </MenuItem>
             ))}
