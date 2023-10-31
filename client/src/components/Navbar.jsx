@@ -18,7 +18,14 @@ import { logOut } from "../state/Auth";
 import { useDispatch } from "react-redux";
 import { isTokenExpired } from "../utils/userValidation";
 import { api } from "../state/api";
-import { Group, House } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Assignment,
+  Group,
+  House,
+  Logout,
+  PostAdd,
+} from "@mui/icons-material";
 import ProfilePic from "./ProfilePic";
 
 const Navbar = ({
@@ -177,39 +184,57 @@ const Navbar = ({
                   <ListItemStyle
                     index="1"
                     active={active}
+                    icon={<House />}
                     onClick={(e) => handleClick(e, "/home")}
                   >
-                    <House sx={{ mr: "0.5rem" }} />
                     Home
                   </ListItemStyle>
 
                   <ListItemStyle
                     index="2"
                     active={active}
+                    icon={<Group />}
                     subMenu={[
                       {
                         name: "Post Vacancy",
+                        icon: <PostAdd />,
                         onClick: (e) => handleClick(e, "/postVacancy"),
                       },
                       {
                         name: "All Vacancies",
+                        icon: <Group />,
                         onClick: (e) => handleClick(e, "/vacancies"),
                       },
                     ]}
                   >
-                    <Group sx={{ mr: "0.5rem" }} />
                     Vacancy
+                  </ListItemStyle>
+                  <ListItemStyle
+                    index="3"
+                    active={active}
+                    icon={<Assignment />}
+                    onClick={(e) => handleClick(e, "/applications")}
+                  >
+                    Applications
                   </ListItemStyle>
                 </div>
                 <ListItemStyle
-                  index="3"
+                  index="4"
                   active={active}
+                  icon={<ProfilePic name={user?.result?.UserName} />}
                   subMenu={[
-                    { name: "User Profile", onClick: () => {} },
-                    { name: "Log Out", onClick: handleLogOut },
+                    {
+                      name: "User Profile",
+                      icon: <AccountCircle />,
+                      onClick: () => {},
+                    },
+                    {
+                      name: "Log Out",
+                      icon: <Logout />,
+                      onClick: handleLogOut,
+                    },
                   ]}
                 >
-                  <ProfilePic name={user?.result?.UserName} />
                   <div
                     style={{
                       display: "flex",
@@ -217,7 +242,7 @@ const Navbar = ({
                       textAlign: "center",
                     }}
                   >
-                    <Typography fontWeight={600}>
+                    <Typography fontWeight={500}>
                       {user?.result?.UserName.split(" ")[0]}
                     </Typography>
                     <Typography fontSize={"0.7rem"}>
