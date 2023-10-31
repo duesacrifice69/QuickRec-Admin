@@ -14,7 +14,6 @@ const ProfilePic = ({ name }) => {
         justifyContent: "center",
         display: "flex",
         alignItems: "center",
-        marginRight: "0.5rem",
       }}
     >
       {name.split(" ").length > 1
