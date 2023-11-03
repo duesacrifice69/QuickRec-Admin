@@ -9,7 +9,7 @@ const ScrollTop = () => {
 
   const handleClick = (event) => {
     const anchor = (event.target.ownerDocument || document).querySelector(
-      "#nav"
+      "#top"
     );
 
     if (anchor) {
@@ -25,7 +25,7 @@ const ScrollTop = () => {
       <Box
         onClick={handleClick}
         role="presentation"
-        sx={{ position: "fixed", bottom: 16, right: 16 }}
+        sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 3 }}
       >
         <Fab size="small" aria-label="scroll back to top">
           <KeyboardArrowUp />

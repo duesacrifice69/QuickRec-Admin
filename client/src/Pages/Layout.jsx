@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Toolbar, useMediaQuery, useScrollTrigger } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import logo from "../Assets/WB_Logo.png";
 import AdminPortalBanner from "../components/AdminPortalBanner";
@@ -8,6 +8,10 @@ import ScrollTop from "../components/ScrollTop";
 
 const Layout = ({ auth }) => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
+  const scrollTrigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 79,
+  });
   const [active, setActive] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -15,6 +19,7 @@ const Layout = ({ auth }) => {
     <Box>
       <Box sx={{ position: "static" }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Toolbar id="top" />
           <Box
             component="img"
             alt="Company logo"
@@ -31,6 +36,7 @@ const Layout = ({ auth }) => {
           <Navbar
             active={active}
             isSidebarOpen={isSidebarOpen}
+            scrollTrigger={scrollTrigger}
             setIsSidebarOpen={setIsSidebarOpen}
             isNonMobile={isNonMobile}
           />
@@ -38,7 +44,13 @@ const Layout = ({ auth }) => {
           <AdminPortalBanner />
         )}
       </Box>
-      <Box>
+      <Box
+        sx={{
+          pt: scrollTrigger && !auth ? 6.5 : 0,
+          minHeight: "calc(100vh - 130px)",
+          background: (theme) => theme.palette.background.main,
+        }}
+      >
         <Outlet context={[setActive]} />
         <ScrollTop />
       </Box>
