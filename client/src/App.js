@@ -17,6 +17,7 @@ import Applications from "./Pages/Applications/Applications";
 import PostVacancy from "./Pages/PostVacancy/PostVacany";
 import Application from "./Pages/Application/Application";
 import Dashboard from "./Pages/Dashboard/Dashboard";
+import Profile from "./Pages/Profile/Profile";
 
 function App() {
   const user = useSelector((state) => state.userContext.data?.result);
@@ -36,6 +37,7 @@ function App() {
           <Route path="/application" element={<Application />} />
           <Route path="/vacancies" element={<VacancyList />} />
           <Route path="/postVacancy" element={<PostVacancy />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
     )

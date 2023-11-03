@@ -113,7 +113,7 @@ const Navbar = ({
                     {
                       name: "User Profile",
                       icon: <AccountCircle />,
-                      onClick: () => {},
+                      onClick: () => handleClick("/profile"),
                     },
                     {
                       name: "Log Out",
@@ -250,7 +250,7 @@ const Navbar = ({
                     {
                       name: "User Profile",
                       icon: <AccountCircle />,
-                      onClick: () => {},
+                      onClick: () => handleClick("/profile"),
                     },
                     {
                       name: "Log Out",
