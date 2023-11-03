@@ -7,9 +7,9 @@ import {
   IconButton,
   Drawer,
   Typography,
+  Collapse,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ListItemStyle from "./ListItemStyle";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -21,28 +21,27 @@ import { api } from "../state/api";
 import {
   AccountCircle,
   Assignment,
+  ExpandLess,
+  ExpandMore,
   Group,
   House,
   Logout,
   PostAdd,
 } from "@mui/icons-material";
-import ProfilePic from "./ProfilePic";
+import ProfileAvatar from "./ProfileAvatar";
 
 const Navbar = ({
   active,
   isSidebarOpen,
   setIsSidebarOpen,
   isNonMobile,
-  window,
+  scrollTrigger,
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(false);
+  const [open, setOpen] = useState(false);
   const user = useSelector((state) => state.userContext.data);
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
 
   useEffect(() => {
     if (isTokenExpired()) {
@@ -55,14 +54,12 @@ const Navbar = ({
     dispatch(api.util.resetApiState());
     dispatch(logOut());
   };
-  const handleMenuClick = (event) => {
-    isNonMobile ? setAnchorEl(event.currentTarget) : setAnchorEl(!anchorEl);
+  const handleMenuClick = () => {
+    setOpen((o) => !o);
   };
-  const handleClick = (e, navigateTo) => {
-    e.stopPropagation();
-    isNonMobile ? setAnchorEl(null) : setAnchorEl(false);
+  const handleClick = (navigateTo) => {
     !isNonMobile && setIsSidebarOpen(false);
-    navigateTo && navigate(navigateTo);
+    navigate(navigateTo);
   };
 
   return (
@@ -73,7 +70,7 @@ const Navbar = ({
       }}
     >
       <AppBar
-        position="static"
+        position={scrollTrigger ? "fixed" : "static"}
         sx={{
           boxShadow: "none",
           display: "flex",
@@ -85,7 +82,6 @@ const Navbar = ({
         }}
       >
         <Toolbar
-          id="nav"
           sx={{
             alignItems: "center",
             display: "flex",
@@ -99,6 +95,7 @@ const Navbar = ({
                   display: "flex",
                   width: "100%",
                   justifyContent: "space-between",
+                  overflowX: "hidden",
                 }}
               >
                 <IconButton
@@ -109,23 +106,31 @@ const Navbar = ({
                   <MenuIcon />
                 </IconButton>
                 <ListItemStyle
-                  index="3"
+                  index="4"
                   active={active}
+                  sx={{ marginRight: { sm: "initial", xs: "-2rem" } }}
                   subMenu={[
-                    { name: "User Profile", onClick: () => {} },
-                    { name: "Log Out", onClick: handleLogOut },
+                    {
+                      name: "User Profile",
+                      icon: <AccountCircle />,
+                      onClick: () => {},
+                    },
+                    {
+                      name: "Log Out",
+                      icon: <Logout />,
+                      onClick: handleLogOut,
+                    },
                   ]}
                 >
-                  <ProfilePic name={user?.result?.UserName} />
+                  <ProfileAvatar />
                 </ListItemStyle>
               </div>
               <Drawer
-                container={container}
                 variant="temporary"
                 open={isSidebarOpen}
                 onClose={() => {
-                  setAnchorEl(false);
-                  setIsSidebarOpen(!isSidebarOpen);
+                  setOpen(false);
+                  setIsSidebarOpen((i) => !i);
                 }}
                 ModalProps={{
                   keepMounted: true, // Better open performance on mobile.
@@ -134,36 +139,55 @@ const Navbar = ({
                   "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
                     backgroundColor: theme.palette.primary[500],
+                    width: 180,
                   },
                 }}
               >
                 <ListItemStyle
                   index="1"
-                  onClick={(e) => handleClick(e, "/home")}
+                  icon={<House />}
+                  onClick={() => handleClick("/home")}
                 >
                   Home
                 </ListItemStyle>
 
-                <ListItemStyle index="2" onClick={handleMenuClick}>
+                <ListItemStyle
+                  index="2"
+                  icon={<Group />}
+                  onClick={handleMenuClick}
+                >
                   Vacancy
-                  <KeyboardArrowDownIcon sx={{ pl: "5px" }} />
+                  {open ? <ExpandLess /> : <ExpandMore />}
                 </ListItemStyle>
-                {anchorEl && (
-                  <div style={{ backgroundColor: theme.palette.primary[400] }}>
-                    <ListItemStyle
-                      index="3"
-                      onClick={(e) => handleClick(e, "/postVacancy")}
-                    >
-                      Post Vacancy
-                    </ListItemStyle>
-                    <ListItemStyle
-                      index="4"
-                      onClick={(e) => handleClick(e, "/vacancies")}
-                    >
-                      All Vacancies
-                    </ListItemStyle>
-                  </div>
-                )}
+                <Collapse
+                  in={open}
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.primary[400],
+                  }}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <ListItemStyle
+                    icon={<PostAdd />}
+                    onClick={() => handleClick("/postVacancy")}
+                  >
+                    Post Vacancy
+                  </ListItemStyle>
+                  <ListItemStyle
+                    icon={<Group />}
+                    onClick={() => handleClick("/vacancies")}
+                  >
+                    All Vacancies
+                  </ListItemStyle>
+                </Collapse>
+                <ListItemStyle
+                  index="3"
+                  active={active}
+                  icon={<Assignment />}
+                  onClick={() => handleClick("/applications")}
+                >
+                  Applications
+                </ListItemStyle>
               </Drawer>
             </Box>
           ) : (
@@ -185,7 +209,7 @@ const Navbar = ({
                     index="1"
                     active={active}
                     icon={<House />}
-                    onClick={(e) => handleClick(e, "/home")}
+                    onClick={() => handleClick("/home")}
                   >
                     Home
                   </ListItemStyle>
@@ -198,12 +222,12 @@ const Navbar = ({
                       {
                         name: "Post Vacancy",
                         icon: <PostAdd />,
-                        onClick: (e) => handleClick(e, "/postVacancy"),
+                        onClick: () => handleClick("/postVacancy"),
                       },
                       {
                         name: "All Vacancies",
                         icon: <Group />,
-                        onClick: (e) => handleClick(e, "/vacancies"),
+                        onClick: () => handleClick("/vacancies"),
                       },
                     ]}
                   >
@@ -213,7 +237,7 @@ const Navbar = ({
                     index="3"
                     active={active}
                     icon={<Assignment />}
-                    onClick={(e) => handleClick(e, "/applications")}
+                    onClick={() => handleClick("/applications")}
                   >
                     Applications
                   </ListItemStyle>
@@ -221,7 +245,7 @@ const Navbar = ({
                 <ListItemStyle
                   index="4"
                   active={active}
-                  icon={<ProfilePic name={user?.result?.UserName} />}
+                  icon={<ProfileAvatar />}
                   subMenu={[
                     {
                       name: "User Profile",
