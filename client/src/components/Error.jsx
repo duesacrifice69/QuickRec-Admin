@@ -8,7 +8,7 @@ const Error = ({ error, setError }) => {
     }, 5000);
   }, [error, setError]);
   return (
-    <Fade in={error}>
+    <Fade in={error ? true : false}>
       <Grid item xs={12}>
         <Typography
           sx={{
