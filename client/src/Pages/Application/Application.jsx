@@ -81,7 +81,7 @@ const Application = () => {
       status: application.status,
       remarks: application.remarks,
     });
-    result?.error ? setError(result.error?.data) : navigate("/home");
+    result?.error ? setError(result.error?.data?.message) : navigate("/home");
   };
 
   return (
@@ -388,7 +388,7 @@ const Application = () => {
                     <ButtonComp
                       sx={{
                         display: "block",
-                        m: "1rem auto",
+                        m: "auto",
                         p: "0.5rem 1rem ",
                       }}
                       onClick={handleSave}

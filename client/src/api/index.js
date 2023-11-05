@@ -18,3 +18,8 @@ export const signin = async (loginData) => {
   );
   return response.data;
 };
+
+export const changePassword = async (data) => {
+  const response = await API.post("user/changePassword", data, config);
+  return response.data;
+};

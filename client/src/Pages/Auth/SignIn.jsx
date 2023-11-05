@@ -12,14 +12,9 @@ const initState = { userName: "", password: "" };
 
 const SignIn = () => {
   const dispatch = useDispatch();
-  const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState(initState);
   const [error, setError] = useState();
   const navigate = useNavigate();
-
-  const handleShowPassowrd = () => {
-    setShowPassword(!showPassword);
-  };
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -35,7 +30,7 @@ const SignIn = () => {
       navigate("/home");
     } catch (error) {
       dispatch(getUserDataOnFailiure(error.response.data));
-      setError(error.response.data);
+      setError(error.response?.data?.message);
       console.log(error.response.data);
     }
   };
@@ -70,8 +65,7 @@ const SignIn = () => {
               label="Password *"
               handleChange={handleChange}
               required
-              type={showPassword ? "text" : "password"}
-              handleShowPassword={handleShowPassowrd}
+              type="password"
             />
             <Grid item xs={12}>
               <ButtonComp type="submit" fullWidth variant="contained">

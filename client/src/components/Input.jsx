@@ -38,19 +38,19 @@ const Input = ({
   inline,
   required,
   loading,
-  handleShowPassword,
   size,
 }) => {
   let inputProps = {};
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [errorText, setErrorText] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  if (name === "password") {
+  if (type === "password") {
     inputProps = {
       endAdornment: (
         <InputAdornment position="end">
-          <IconButton onClick={handleShowPassword}>
-            {type === "password" ? <VisibilityIcon /> : <VisibilityOffIcon />}
+          <IconButton onClick={() => setShowPassword((s) => !s)}>
+            {!showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
           </IconButton>
         </InputAdornment>
       ),
@@ -233,7 +233,13 @@ const Input = ({
             helperText={helperText ?? errorText}
             minRows={minRows}
             maxRows={maxRows}
-            type={type === "file" ? null : type}
+            type={
+              type === "file"
+                ? null
+                : type === "password" && !showPassword
+                ? "password"
+                : "text"
+            }
             InputProps={inputProps}
             sx={{
               backgroundColor: (theme) => theme.palette.background.main,

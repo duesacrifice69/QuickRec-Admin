@@ -92,7 +92,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
       attachment: attachment,
     });
     if (result.error) {
-      setError(result.error?.data);
+      setError(result.error?.data?.message);
     } else {
       isEditing ? handleCancel() : navigate("/vacancies");
     }
@@ -210,15 +210,6 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       required
                       inline
                     />
-                    {/* <Input
-                  type="number"
-                  name="ExpectedNoOfApplicants"
-                  label="Expected No. of Applicants :"
-                  value={vacancy.ExpectedNoOfApplicants}
-                  handleChange={handleChange}
-                  required
-                  inline
-                /> */}
                     <Input
                       type="number"
                       name="NoOfVacancies"
@@ -308,7 +299,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                           type="submit"
                           sx={{
                             display: "block",
-                            m: "2rem 0",
+                            mt: "2rem",
                             ml: "auto",
                             p: "1rem ",
                           }}
