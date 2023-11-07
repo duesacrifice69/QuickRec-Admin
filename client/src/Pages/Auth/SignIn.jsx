@@ -36,15 +36,14 @@ const SignIn = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" sx={{ pt: "2rem" }}>
       <Paper
         sx={{
-          mt: "2rem",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "1rem",
+          p: "1rem",
         }}
         elevation={0}
         variant="outlined"
@@ -68,7 +67,12 @@ const SignIn = () => {
               type="password"
             />
             <Grid item xs={12}>
-              <ButtonComp type="submit" fullWidth variant="contained">
+              <ButtonComp
+                type="submit"
+                sx={{ mb: error ? "auto" : "-2rem" }}
+                fullWidth
+                variant="contained"
+              >
                 Sign In
               </ButtonComp>
             </Grid>

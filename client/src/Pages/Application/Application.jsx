@@ -37,19 +37,19 @@ const Application = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const location = useLocation();
-  const params = location?.state;
+  const { userId, applicationId, vacancyId } = location?.state;
   const navigate = useNavigate();
   const { data: applicationData, isLoading: applicationIsLoading } =
-    useGetAppDetailsQuery(params);
+    useGetAppDetailsQuery({ userId, applicationId });
   const { basicDetails, education, experience, otherDetails } =
     !applicationIsLoading && applicationData?.data;
 
   useEffect(() => setActive("0"), [setActive]);
   useEffect(() => {
-    if (!params) {
+    if (!userId || !applicationId) {
       navigate("/home");
     }
-  }, [navigate, params]);
+  }, [navigate, userId, applicationId]);
 
   useEffect(() => {
     !applicationIsLoading &&
@@ -68,20 +68,22 @@ const Application = () => {
 
   const handleApprove = async (e, stepId, detailId) => {
     approveDetail({
-      applicationId: params.applicationId,
-      stepId: stepId,
-      detailId: detailId,
+      applicationId,
+      stepId,
+      detailId,
       isApproved: e.target.checked ? 1 : 0,
     });
   };
 
   const handleSave = async () => {
     const result = await reviewApplication({
-      applicationId: params.applicationId,
+      applicationId,
       status: application.status,
       remarks: application.remarks,
     });
-    result?.error ? setError(result.error?.data?.message) : navigate("/home");
+    result?.error
+      ? setError(result.error?.data?.message)
+      : navigate("/applications", { state: { vacancyId } });
   };
 
   return (
@@ -242,7 +244,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {dayjs(basicDetails.dateOfBirth).format("YYYY-MM-DD")}
+                      {dayjs(basicDetails.dateOfBirth).format("DD/MM/YYYY")}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>

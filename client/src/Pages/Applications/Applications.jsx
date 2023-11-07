@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -23,6 +23,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Input from "../../components/Input";
@@ -49,6 +50,8 @@ const Applications = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [vacancyId, setVacancyId] = useState(undefined);
   const [vacancy, setVacancy] = useState(null);
+  const location = useLocation();
+  const [setActive] = useOutletContext();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
@@ -56,6 +59,12 @@ const Applications = () => {
     useGetApplicationsByVacancyQuery(vacancyId);
   const { data: vacancies, isLoading: vacanciesIsLoading } =
     useGetVacancyBySearchQuery("");
+
+  useEffect(() => setActive("3"), [setActive]);
+
+  useEffect(() => {
+    setVacancyId(location?.state?.vacancyId);
+  }, [location?.state?.vacancyId]);
 
   useEffect(() => {
     !vacanciesIsLoading &&
@@ -83,8 +92,9 @@ const Applications = () => {
   const handleApplicationView = (userId, applicationId) => {
     navigate("/application", {
       state: {
-        userId: userId,
-        applicationId: applicationId,
+        userId,
+        applicationId,
+        vacancyId,
       },
     });
   };
@@ -130,7 +140,7 @@ const Applications = () => {
                 rowSpacing={2}
                 sx={{
                   m: "2rem auto",
-                  backgroundColor: theme.palette.secondary[100],
+                  backgroundColor: theme.palette.background.main,
                   borderRadius: "10px",
                   p: "1rem 3vw",
                 }}
@@ -193,7 +203,7 @@ const Applications = () => {
                     sx={{ display: "flex", justifyContent: "flex-end" }}
                   >
                     {vacancy?.ClosingDate
-                      ? dayjs(vacancy?.ClosingDate).format("YYYY-MM-DD")
+                      ? dayjs(vacancy?.ClosingDate).format("DD/MM/YYYY")
                       : null}
                   </Typography>
                 </Grid>
@@ -225,7 +235,7 @@ const Applications = () => {
                   >
                     {vacancy?.PlannedInterViewDate
                       ? dayjs(vacancy?.PlannedInterViewDate).format(
-                          "YYYY-MM-DD"
+                          "DD/MM/YYYY"
                         )
                       : null}
                   </Typography>
@@ -252,10 +262,10 @@ const Applications = () => {
             <Grid item xs={12}>
               <Table
                 sx={{
-                  display: isMobile ? "block" : "table",
+                  display: { xs: "block", sm: "table" },
                   overflowX: "scroll",
-                  backgroundColor: theme.palette.secondary[100],
-                  border: "1px solid " + theme.palette.secondary[500],
+                  backgroundColor: theme.palette.background.main,
+                  border: "1px solid " + theme.palette.secondary[200],
                   borderRadius: "3px",
                   th: {
                     backgroundColor: theme.palette.secondary[200],
@@ -326,7 +336,7 @@ const Applications = () => {
                           </TableCell>
                           <TableCell align="center">{row.MobileNo1}</TableCell>
                           <TableCell align="center">
-                            {dayjs(row.AppliedDate).format("YYYY-MM-DD")}
+                            {dayjs(row.AppliedDate).format("DD/MM/YYYY")}
                           </TableCell>
                           <TableCell align="center">
                             <Chip
