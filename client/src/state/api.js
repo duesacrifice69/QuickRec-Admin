@@ -1,11 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL,prepareHeaders: (headers) => {
-    headers.set("authorization", localStorage.getItem("profile"));
-    return headers;
-  }, }),
-  
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.REACT_APP_BASE_URL,
+    prepareHeaders: (headers) => {
+      headers.set("authorization", localStorage.getItem("profile"));
+      return headers;
+    },
+  }),
+
   reducerPath: "adminApi",
   tagTypes: ["Vacancy", "Application", "Applications", "Master"],
   endpoints: (builder) => ({
@@ -58,7 +61,7 @@ export const api = createApi({
           formData: true,
         };
       },
-      invalidatesTags: ["Vacancy"],
+      invalidatesTags: ["Vacancy", "Master"],
     }),
     approveDetail: builder.mutation({
       query: ({ applicationId, stepId, detailId, isApproved }) => ({
@@ -72,7 +75,7 @@ export const api = createApi({
         url: `/application/reviewed?applicationId=${applicationId}&status=${status}&remarks=${remarks}`,
         method: "POST",
       }),
-      invalidatesTags: ["Application", "Applications", "Vacancy"],
+      invalidatesTags: ["Application", "Applications", "Vacancy", "Master"],
     }),
   }),
 });
