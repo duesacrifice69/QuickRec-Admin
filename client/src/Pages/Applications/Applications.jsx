@@ -92,8 +92,9 @@ const Applications = () => {
   const handleApplicationView = (userId, applicationId) => {
     navigate("/application", {
       state: {
-        userId: userId,
-        applicationId: applicationId,
+        userId,
+        applicationId,
+        vacancyId,
       },
     });
   };
