@@ -36,16 +36,35 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
           fontSize: (isMobile) => (isMobile ? "0.8rem" : "1rem"),
         }}
         action={
-          <Chip
-            label={vacancy.Status}
-            variant="outlined"
-            color={vacancy.Status === "Open" ? "primary" : "error"}
-            sx={{
-              fontWeight: 500,
-              mr: "10px",
-              mt: "10px",
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "50px",
+              minWidth: "70px",
+              marginRight: "10px",
             }}
-          />
+          >
+            <Chip
+              label={vacancy.Status}
+              variant="filled"
+              color={vacancy.Status === "Open" ? "primary" : "error"}
+              sx={{
+                fontWeight: 500,
+                width: "57.65px",
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: "0.8rem",
+                fontWeight: 400,
+              }}
+            >
+              {vacancy.DaysLeft}
+            </Typography>
+          </div>
         }
       />
       <CardContent sx={{ "&:last-child": { pb: "10px" } }}>
@@ -77,7 +96,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
                   color: (theme) => theme.palette.secondary[700],
                 }}
               >
-                {dayjs(vacancy.ClosingDate).format("YYYY-MM-DD")}
+                {dayjs(vacancy.ClosingDate).format("DD/MM/YYYY")}
               </Typography>
             </div>
           </Grid>
@@ -93,7 +112,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
                   color: (theme) => theme.palette.secondary[700],
                 }}
               >
-                {dayjs(vacancy.PublishedDate).format("YYYY-MM-DD")}
+                {dayjs(vacancy.PublishedDate).format("DD/MM/YYYY")}
               </Typography>
             </div>
           </Grid>

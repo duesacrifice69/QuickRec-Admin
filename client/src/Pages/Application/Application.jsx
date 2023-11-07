@@ -81,7 +81,9 @@ const Application = () => {
       status: application.status,
       remarks: application.remarks,
     });
-    result?.error ? setError(result.error?.data?.message) : navigate("/home");
+    result?.error
+      ? setError(result.error?.data?.message)
+      : navigate("/applications");
   };
 
   return (
@@ -242,7 +244,7 @@ const Application = () => {
                         color: theme.palette.secondary[700],
                       }}
                     >
-                      {dayjs(basicDetails.dateOfBirth).format("YYYY-MM-DD")}
+                      {dayjs(basicDetails.dateOfBirth).format("DD/MM/YYYY")}
                     </Typography>
                   </Grid>
                   <Grid item xs={isMobile ? 5 : 2}>
