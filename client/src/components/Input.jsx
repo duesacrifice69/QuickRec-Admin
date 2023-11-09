@@ -181,6 +181,7 @@ const Input = ({
                 backgroundColor: (theme) => theme.palette.background.main,
               }}
               size="small"
+              disabled={disabled}
             >
               {options.map((option, i) => (
                 <MenuItem key={i} value={option.value}>
