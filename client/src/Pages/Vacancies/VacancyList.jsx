@@ -28,7 +28,12 @@ const VacancyList = () => {
   const [search, setSearch] = useState("");
   const theme = useTheme();
   const { data: searchVacancyList, isLoading: vacancySearchLoading } =
-    useGetVacancyBySearchQuery(search);
+    useGetVacancyBySearchQuery({
+      searchQuery: search,
+      vacancyType: "",
+      salaryGroup: "",
+      boardGrade: "",
+    });
 
   useEffect(() => setActive("2"), [setActive]);
 

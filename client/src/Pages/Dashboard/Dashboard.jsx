@@ -66,7 +66,12 @@ const chartSetting = {
 const Dashboard = () => {
   const { data: masterData } = useGetMasterDataQuery();
   const { data: vacancies, isLoading: vacanciesIsLoading } =
-    useGetVacancyBySearchQuery("");
+    useGetVacancyBySearchQuery({
+      searchQuery: "",
+      vacancyType: "",
+      salaryGroup: "",
+      boardGrade: "",
+    });
   const [setActive] = useOutletContext();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -114,7 +119,10 @@ const Dashboard = () => {
             />
           </Grid>
           <Grid item xs={6} sm={3}>
-            <CountUpCard count={25} title="Applications to Review" />
+            <CountUpCard
+              count={masterData?.data?.dashboardData?.NoOfPendingVacancies}
+              title="Vacancies to Approve"
+            />
           </Grid>
           <Grid item xs={6} sm={3}>
             <CountUpCard count={25} title="Applications to Review" />
