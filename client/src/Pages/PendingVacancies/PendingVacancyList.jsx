@@ -18,7 +18,7 @@ import Vacancy from "../../components/Vacancy";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
 
-const VacancyList = () => {
+const PendingVacancyList = () => {
   const [setActive] = useOutletContext();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -34,6 +34,10 @@ const VacancyList = () => {
       salaryGroup: "",
       boardGrade: "",
     });
+  const pendingVacancyList = searchVacancyList?.data?.filter(
+    (vacancy) => vacancy.Status === "Pending"
+  );
+  console.log(pendingVacancyList);
 
   useEffect(() => setActive("2"), [setActive]);
 
@@ -90,7 +94,7 @@ const VacancyList = () => {
               mb: "1rem",
             }}
           >
-            Available Opportunities
+            Pending Vacancies
           </Typography>
           <Paper
             component="form"
@@ -133,9 +137,9 @@ const VacancyList = () => {
             marginTop: "2rem",
           }}
         >
-          {searchVacancyList && !vacancySearchLoading ? (
-            searchVacancyList.data.length > 0 ? (
-              searchVacancyList.data.map((vacancy) => {
+          {pendingVacancyList && !vacancySearchLoading ? (
+            pendingVacancyList.length > 0 ? (
+              pendingVacancyList.map((vacancy) => {
                 return (
                   <Vacancy
                     key={vacancy.VacancyId}
@@ -173,4 +177,4 @@ const VacancyList = () => {
   );
 };
 
-export default VacancyList;
+export default PendingVacancyList;

@@ -27,8 +27,10 @@ import {
   House,
   Logout,
   PostAdd,
+  PendingActions,
 } from "@mui/icons-material";
 import ProfileAvatar from "./ProfileAvatar";
+import userHasPermission from "../permissions";
 
 const Navbar = ({
   active,
@@ -41,7 +43,9 @@ const Navbar = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const user = useSelector((state) => state.userContext.data);
+  const { UserName, UserRole } = useSelector(
+    (state) => state.userContext.data.result
+  );
 
   useEffect(() => {
     if (isTokenExpired()) {
@@ -174,6 +178,12 @@ const Navbar = ({
                     Post Vacancy
                   </ListItemStyle>
                   <ListItemStyle
+                    icon={<PendingActions />}
+                    onClick={() => handleClick("/pendingVacancies")}
+                  >
+                    Pending Vacancies
+                  </ListItemStyle>
+                  <ListItemStyle
                     icon={<Group />}
                     onClick={() => handleClick("/vacancies")}
                   >
@@ -225,11 +235,21 @@ const Navbar = ({
                         onClick: () => handleClick("/postVacancy"),
                       },
                       {
+                        name: "Pending Vacancies",
+                        icon: <PendingActions />,
+                        onClick: () => handleClick("/pendingVacancies"),
+                      },
+                      {
                         name: "All Vacancies",
                         icon: <Group />,
                         onClick: () => handleClick("/vacancies"),
                       },
-                    ]}
+                    ].filter((item) =>
+                      userHasPermission({
+                        userRole: UserRole,
+                        permission: item.name,
+                      })
+                    )}
                   >
                     Vacancy
                   </ListItemStyle>
@@ -267,11 +287,9 @@ const Navbar = ({
                     }}
                   >
                     <Typography fontWeight={500}>
-                      {user?.result?.UserName.split(" ")[0]}
+                      {UserName.split(" ")[0]}
                     </Typography>
-                    <Typography fontSize={"0.7rem"}>
-                      {user?.result?.UserRole}
-                    </Typography>
+                    <Typography fontSize={"0.7rem"}>{UserRole}</Typography>
                   </div>
                 </ListItemStyle>
               </List>

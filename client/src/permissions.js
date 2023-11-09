@@ -1,6 +1,15 @@
-const deniedPermissions = [
-  { role: "Administrator", vacancy: [], application: [], profile: [] },
-  { role: "Test", vacancy: [], application: [], profile: ["Manage Users"] },
+const permissions = [
+  { role: "Administrator", deny: [] },
+  {
+    role: "Test",
+    deny: ["Manage Users", "Pending Vacancies", "Approve Vacancy"],
+  },
 ];
 
-export default deniedPermissions;
+const userHasPermission = ({ userRole, permission }) => {
+  const userPermissions = permissions.find((user) => user.role === userRole);
+  const userHasPermission = !userPermissions.deny.includes(permission);
+  return userHasPermission;
+};
+
+export default userHasPermission;

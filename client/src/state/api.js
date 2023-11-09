@@ -19,7 +19,9 @@ export const api = createApi({
       invalidatesTags: ["Vacancy"],
     }),
     getVacancyBySearch: builder.query({
-      query: (searchQuery) => `/vacancy/search/?searchQuery=${searchQuery}`,
+      query: (searchQuery) => {
+        return { url: `/vacancy/search/`, params: { ...searchQuery } };
+      },
       providesTags: ["Vacancy"],
     }),
     getMasterData: builder.query({

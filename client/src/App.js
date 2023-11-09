@@ -18,6 +18,8 @@ import PostVacancy from "./Pages/PostVacancy/PostVacany";
 import Application from "./Pages/Application/Application";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Profile from "./Pages/Profile/Profile";
+import PendingVacancyList from "./Pages/PendingVacancies/PendingVacancyList";
+import userHasPermission from "./permissions";
 
 function App() {
   const user = useSelector((state) => state.userContext.data?.result);
@@ -36,6 +38,16 @@ function App() {
           <Route path="/applications" element={<Applications />} />
           <Route path="/application" element={<Application />} />
           <Route path="/vacancies" element={<VacancyList />} />
+          {user &&
+            userHasPermission({
+              userRole: user.UserRole,
+              permission: "Pending Vacancies",
+            }) && (
+              <Route
+                path="/pendingVacancies"
+                element={<PendingVacancyList />}
+              />
+            )}
           <Route path="/postVacancy" element={<PostVacancy />} />
           <Route path="/profile" element={<Profile />} />
         </Route>

@@ -58,7 +58,12 @@ const Applications = () => {
   const { data: allApplications, isLoading: applicationsIsLoading } =
     useGetApplicationsByVacancyQuery(vacancyId);
   const { data: vacancies, isLoading: vacanciesIsLoading } =
-    useGetVacancyBySearchQuery("");
+    useGetVacancyBySearchQuery({
+      searchQuery: "",
+      vacancyType: "",
+      salaryGroup: "",
+      boardGrade: "",
+    });
 
   useEffect(() => setActive("3"), [setActive]);
 

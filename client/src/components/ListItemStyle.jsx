@@ -39,6 +39,7 @@ const ListItemStyle = ({
           position: "relative",
           height: "50px",
           boxSizing: "border-box",
+          color: "#ffffff",
           backgroundColor: (theme) =>
             active === index ? theme.palette.primary[600] : "initial",
           fontWeight: { sm: 600, xs: 400 },

@@ -9,9 +9,7 @@ import {
   ListItem,
   ListItemButton,
   Paper,
-  Switch,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
@@ -22,6 +20,7 @@ import {
 } from "../../state/api";
 import Error from "../../components/Error";
 import { downloadHandler } from "../../components/DownloadIcon";
+import userHasPermission from "../../permissions";
 
 const initState = {
   VacancyName: "",
@@ -36,7 +35,7 @@ const initState = {
   Remarks: "",
   ExpectedNoOfApplicants: 1,
   AdvertismentPath: "",
-  Status: "ACT",
+  Status: "PENDING",
 };
 
 const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
@@ -46,14 +45,16 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const [attachment, setAttachment] = useState(null);
   const [error, setError] = useState();
   const [createVacancy] = useCreateVacancyMutation();
-  const { UserId } = useSelector((state) => state.userContext.data.result);
+  const { UserId, UserRole } = useSelector(
+    (state) => state.userContext.data.result
+  );
   const { data: masterData, isLoading: masterDataIsLoading } =
     useGetMasterDataQuery();
   const [vacancy, setVacancy] = useState({
     ...initState,
     userId: UserId,
   });
-  const isMobile = useMediaQuery("(max-width: 600px)");
+
   const recruitmentOptions = [
     { text: "Internal Recruitment", value: "INT" },
     { text: "External Recruitment", value: "EXT" },
@@ -62,6 +63,11 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
       text: "Internal and External Recruitment",
       value: "INT_EXT",
     },
+  ];
+  const statusOptions = [
+    { text: "Active", value: "ACT" },
+    { text: "Inactive", value: "INA" },
+    { text: "Pending", value: "PEN" },
   ];
 
   useEffect(() => setActive("2"), [setActive]);
@@ -73,7 +79,12 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
         RecruitmentType: recruitmentOptions.find(
           (v) => v.text === editingVacancy.RecruitmentType
         ).value,
-        Status: editingVacancy.Status === "Open" ? "ACT" : "INA",
+        Status:
+          editingVacancy.Status === "Open"
+            ? "ACT"
+            : editingVacancy.Status === "Close"
+            ? "INA"
+            : "PENDING",
       });
     // eslint-disable-next-line
   }, [editingVacancy]);
@@ -248,24 +259,22 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       minRows={5}
                       maxRows={8}
                     />
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <Typography sx={{ pt: "0.5rem", fontWeight: 500 }}>
-                        Active :
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={isMobile ? 12 : 6}>
-                      <Switch
-                        checked={vacancy.Status === "ACT" ? true : false}
-                        onChange={(e) => {
-                          handleChange({
-                            target: {
-                              name: "Status",
-                              value: e.target.checked === true ? "ACT" : "INA",
-                            },
-                          });
-                        }}
+                    {userHasPermission({
+                      userRole: UserRole,
+                      permission: "Approve Vacancy",
+                    }) && (
+                      <Input
+                        name="Status"
+                        label="Status :"
+                        type="select"
+                        value={vacancy.Status}
+                        handleChange={handleChange}
+                        options={statusOptions}
+                        disabled={vacancy.NoOfApplicants > 0 ? true : false}
+                        inline
+                        required
                       />
-                    </Grid>
+                    )}
                     <Grid item xs={12}>
                       <hr />
                     </Grid>

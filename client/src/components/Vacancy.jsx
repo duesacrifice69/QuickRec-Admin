@@ -25,7 +25,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
         title={vacancy.VacancyName}
         subheader={`Posted ${vacancy.DaysPosted}`}
         sx={{
-          backgroundColor: (theme) => theme.palette.secondary[400],
+          backgroundColor: (theme) => theme.palette.secondary[100],
           p: "12px",
         }}
         titleTypographyProps={{
@@ -50,10 +50,16 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
             <Chip
               label={vacancy.Status}
               variant="filled"
-              color={vacancy.Status === "Open" ? "primary" : "error"}
+              color={
+                vacancy.Status === "Open"
+                  ? "primary"
+                  : vacancy.Status === "Close"
+                  ? "error"
+                  : "warning"
+              }
               sx={{
                 fontWeight: 500,
-                width: "57.65px",
+                width: "max-content",
               }}
             />
             <Typography
