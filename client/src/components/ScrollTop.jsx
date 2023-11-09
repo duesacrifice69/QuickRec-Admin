@@ -25,6 +25,7 @@ const ScrollTop = () => {
       <Box
         onClick={handleClick}
         role="presentation"
+        className="mui-fixed"
         sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 3 }}
       >
         <Fab size="small" aria-label="scroll back to top">
