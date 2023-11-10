@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
-import * as API from "../../api/index.js";
+import api from "../../api";
 import Error from "../../components/Error";
 import { Box, Container, Paper } from "@mui/material";
 const initState = {
@@ -28,7 +28,7 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.changePassword({
+      const response = await api.changePassword({
         userId: UserId,
         currentPassword: passwordChangeData.currentPassword,
         newPassword: passwordChangeData.newPassword,
