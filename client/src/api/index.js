@@ -10,7 +10,7 @@ const API = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL || "http://localhost:5000",
 }); // 10.0.19.177
 
-export const signin = async (loginData) => {
+const signin = async (loginData) => {
   const response = await API.post(
     "user/signin",
     { ...loginData, admin: true },
@@ -19,7 +19,17 @@ export const signin = async (loginData) => {
   return response.data;
 };
 
-export const changePassword = async (data) => {
+const getEmployeeByEmpNo = async (empNo) => {
+  const response = await API.post(
+    `user/findEmployee?employeeNo=${empNo}`,
+    config
+  );
+  return response.data;
+};
+
+const changePassword = async (data) => {
   const response = await API.post("user/changePassword", data, config);
   return response.data;
 };
+
+export default { signin, getEmployeeByEmpNo, changePassword };
