@@ -5,7 +5,7 @@ import ButtonComp from "../../components/ButtonComp";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getUserDataOnSuccess, getUserDataOnFailiure } from "../../state/Auth";
-import * as api from "../../api/";
+import api from "../../api/";
 import Error from "../../components/Error";
 
 const initState = { userName: "", password: "" };

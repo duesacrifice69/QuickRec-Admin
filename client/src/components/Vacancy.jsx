@@ -25,7 +25,7 @@ const Vacancy = ({ vacancy, onDelete, onEdit }) => {
         title={vacancy.VacancyName}
         subheader={`Posted ${vacancy.DaysPosted}`}
         sx={{
-          backgroundColor: (theme) => theme.palette.secondary[100],
+          backgroundColor: (theme) => theme.palette.secondary[200],
           p: "12px",
         }}
         titleTypographyProps={{

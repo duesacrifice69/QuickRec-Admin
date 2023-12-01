@@ -67,7 +67,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const statusOptions = [
     { text: "Active", value: "ACT" },
     { text: "Inactive", value: "INA" },
-    { text: "Pending", value: "PEN" },
+    { text: "Pending", value: "PENDING" },
   ];
 
   useEffect(() => setActive("2"), [setActive]);
