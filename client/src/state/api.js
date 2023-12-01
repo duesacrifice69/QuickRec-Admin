@@ -10,7 +10,7 @@ export const api = createApi({
   }),
 
   reducerPath: "adminApi",
-  tagTypes: ["Vacancy", "Application", "Applications", "Master"],
+  tagTypes: ["Vacancy", "Application", "Applications", "Master", "Admins"],
   endpoints: (builder) => ({
     getApplicationsByVacancy: builder.query({
       query: (vacancyId) =>
@@ -28,11 +28,23 @@ export const api = createApi({
       query: () => `/common/masterData`,
       providesTags: ["Master"],
     }),
+    getAdmins: builder.mutation({
+      query: () => ({
+        url: `user/admins`,
+      }),
+      providesTags: ["Admins"],
+    }),
     getAppDetails: builder.query({
       query: ({ userId, applicationId }) => ({
         url: `/application/userApplication?userId=${userId}&applicationId=${applicationId}`,
       }),
       providesTags: ["Application"],
+    }),
+    getEmployee: builder.query({
+      query: ({ employeeNo, admin }) => ({
+        url: `user/getEmployee?employeeNo=${employeeNo}&admin=${admin}`,
+      }),
+      providesTags: ["Admins"],
     }),
     createVacancy: builder.mutation({
       query: ({ createReq, attachment }) => {
@@ -79,6 +91,13 @@ export const api = createApi({
       }),
       invalidatesTags: ["Application", "Applications", "Vacancy", "Master"],
     }),
+    changeUserRole: builder.mutation({
+      query: ({ userId, userRoleId }) => ({
+        url: `user/changeUserRole?userId=${userId}&userRoleId=${userRoleId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Admins"],
+    }),
   }),
 });
 
@@ -90,4 +109,6 @@ export const {
   useCreateVacancyMutation,
   useGetAppDetailsQuery,
   useReviewApplicationMutation,
+  useGetEmployeeQuery,
+  useChangeUserRoleMutation,
 } = api;

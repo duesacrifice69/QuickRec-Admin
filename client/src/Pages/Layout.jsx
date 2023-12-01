@@ -19,7 +19,7 @@ const Layout = ({ auth }) => {
     <Box>
       <Box sx={{ position: "static" }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Toolbar id="top" />
+          <Toolbar id="top" sx={{ p: 0 }} />
           <Box
             component="img"
             alt="Company logo"
@@ -46,7 +46,7 @@ const Layout = ({ auth }) => {
       </Box>
       <Box
         sx={{
-          pt: scrollTrigger && !auth ? 6.5 : 0,
+          pt: scrollTrigger && !auth ? 6.3 : 0,
           minHeight: "calc(100vh - 130px)",
           background: (theme) => theme.palette.background.main,
         }}

@@ -5,8 +5,7 @@ const Error = ({ error, setError }) => {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    console.log(error);
-    if (error !== (null || undefined)) {
+    if (error !== null && error !== undefined) {
       setFadeIn(true);
       setTimeout(() => setFadeIn(false), 5000);
       setTimeout(() => setError(null), 5500);

@@ -27,7 +27,7 @@ const VacancyList = () => {
   const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const theme = useTheme();
-  const { data: searchVacancyList, isLoading: vacancySearchLoading } =
+  const { data: searchVacancyList, isFetching: vacancySearchLoading } =
     useGetVacancyBySearchQuery({
       searchQuery: search,
       vacancyType: "",

@@ -4,7 +4,7 @@ import Input from "../../components/Input";
 import ButtonComp from "../../components/ButtonComp";
 import api from "../../api";
 import Error from "../../components/Error";
-import { Box, Container, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 const initState = {
   currentPassword: "",
   newPassword: "",
@@ -41,61 +41,65 @@ const ChangePassword = () => {
     }
   };
   return (
-    <Paper
-      sx={{
-        m: "auto",
-        p: "2rem",
-        // width: "100%",
-      }}
-      component="form"
-      onSubmit={handleSubmit}
-    >
-      {/* <Container maxWidth="md" sx={{ ml: 0 }}> */}
-      <Box
+    <Box sx={{ width: "100%" }}>
+      <Paper
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-          maxWidth: "400px",
+          m: { xs: "2rem 1.25rem", sm: "3rem" },
+          p: "2rem",
+          maxWidth: "max-content",
         }}
+        component="form"
+        onSubmit={handleSubmit}
       >
-        <Input
-          label="Current Password *"
-          type="password"
-          name="currentPassword"
-          value={passwordChangeData.currentPassword}
-          handleChange={handleChange}
-          required
-        />
-        <Input
-          label="New Password *"
-          type="password"
-          name="newPassword"
-          value={passwordChangeData.newPassword}
-          handleChange={handleChange}
-          required
-        />
-        <Input
-          label="Confirm New Password *"
-          type="password"
-          name="confirmNewPassword"
-          value={passwordChangeData.confirmNewPassword}
-          handleChange={handleChange}
-          error={!confirmPasswordMatches}
-          helperText={!confirmPasswordMatches && "Password doesn't match."}
-          required
-        />
-      </Box>
-      <ButtonComp
-        type="submit"
-        disabled={!confirmPasswordMatches}
-        sx={{ display: "block", p: "1rem", m: "3rem auto" }}
-      >
-        Change Password
-      </ButtonComp>
-      <Error error={error} setError={setError} />
-      {/* </Container> */}
-    </Paper>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem",
+            maxWidth: "400px",
+          }}
+        >
+          <Input
+            label="Current Password *"
+            type="password"
+            name="currentPassword"
+            value={passwordChangeData.currentPassword}
+            handleChange={handleChange}
+            required
+          />
+          <Input
+            label="New Password *"
+            type="password"
+            name="newPassword"
+            value={passwordChangeData.newPassword}
+            handleChange={handleChange}
+            required
+          />
+          <Input
+            label="Confirm New Password *"
+            type="password"
+            name="confirmNewPassword"
+            value={passwordChangeData.confirmNewPassword}
+            handleChange={handleChange}
+            error={!confirmPasswordMatches}
+            helperText={!confirmPasswordMatches && "Password doesn't match."}
+            required
+          />
+        </Box>
+        <ButtonComp
+          type="submit"
+          disabled={!confirmPasswordMatches}
+          sx={{
+            display: "block",
+            p: { xs: "0.6rem", sm: "1rem" },
+            m: "3rem auto 0",
+          }}
+        >
+          Change Password
+        </ButtonComp>
+        <Error error={error} setError={setError} />
+      </Paper>
+    </Box>
   );
 };
 

@@ -27,6 +27,7 @@ const ListItemStyle = ({
       role="none"
       sx={{
         width: "max-content",
+        p: { xs: 0, md: "8px 16px" },
         ...sx,
       }}
     >
@@ -43,7 +44,7 @@ const ListItemStyle = ({
           backgroundColor: (theme) =>
             active === index ? theme.palette.primary[600] : "initial",
           fontWeight: { sm: 600, xs: 400 },
-          fontSize: { sm: "1.25rem", xs: "1rem" },
+          fontSize: { md: "1.25rem", sm: "1rem" },
           "&:hover": {
             transition: "0.5s all ease-in-out",
             bakcground: "none",
@@ -56,8 +57,10 @@ const ListItemStyle = ({
           <>
             &nbsp;
             <KeyboardArrowDown
-              fontSize="20px"
-              sx={{ display: { sm: "initial", xs: "none" } }}
+              sx={{
+                display: { sm: "initial", xs: "none" },
+                fontSize: { md: "1.25rem", sm: "1rem" },
+              }}
             />
             <Menu
               anchorEl={anchorEl}

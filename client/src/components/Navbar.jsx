@@ -112,7 +112,14 @@ const Navbar = ({
                 <ListItemStyle
                   index="4"
                   active={active}
-                  sx={{ marginRight: { sm: "initial", xs: "-2rem" } }}
+                  sx={{
+                    marginRight: "-2rem",
+                    " .MuiListItemButton-root": {
+                      p: 0,
+                      pr: "2.1rem",
+                      height: "100%",
+                    },
+                  }}
                   subMenu={[
                     {
                       name: "User Profile",
@@ -126,7 +133,7 @@ const Navbar = ({
                     },
                   ]}
                 >
-                  <ProfileAvatar />
+                  <ProfileAvatar width="35px" />
                 </ListItemStyle>
               </div>
               <Drawer
@@ -143,7 +150,7 @@ const Navbar = ({
                   "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
                     backgroundColor: theme.palette.primary[500],
-                    width: 180,
+                    width: 205,
                   },
                 }}
               >
@@ -174,18 +181,21 @@ const Navbar = ({
                   <ListItemStyle
                     icon={<PostAdd />}
                     onClick={() => handleClick("/postVacancy")}
+                    sx={{ width: "100%" }}
                   >
                     Post Vacancy
                   </ListItemStyle>
                   <ListItemStyle
                     icon={<PendingActions />}
                     onClick={() => handleClick("/pendingVacancies")}
+                    sx={{ width: "100%" }}
                   >
                     Pending Vacancies
                   </ListItemStyle>
                   <ListItemStyle
                     icon={<Group />}
                     onClick={() => handleClick("/vacancies")}
+                    sx={{ width: "100%" }}
                   >
                     All Vacancies
                   </ListItemStyle>

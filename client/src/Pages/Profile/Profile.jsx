@@ -24,9 +24,9 @@ const Profile = () => {
     >
       <Box
         sx={{
-          display: "flex",
+          display: { xs: "none", sm: "flex" },
           flexDirection: "column",
-          minWidth: "250px",
+          minWidth: { sm: "200px", md: "250px" },
           minHeight: "calc(100vh - 130px)",
           backgroundColor: (theme) => theme.palette.primary[400],
         }}
@@ -52,7 +52,7 @@ const Profile = () => {
                   pb: "1.5rem",
                   width: "100%",
                   fontWeight: 600,
-                  fontSize: "1rem",
+                  fontSize: { md: "1rem", sm: "0.8rem" },
                   borderRadius: 0,
                   color: (theme) =>
                     i === activeSection

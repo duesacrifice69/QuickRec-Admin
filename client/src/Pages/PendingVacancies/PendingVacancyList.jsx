@@ -37,7 +37,6 @@ const PendingVacancyList = () => {
   const pendingVacancyList = searchVacancyList?.data?.filter(
     (vacancy) => vacancy.Status === "Pending"
   );
-  console.log(pendingVacancyList);
 
   useEffect(() => setActive("2"), [setActive]);
 
