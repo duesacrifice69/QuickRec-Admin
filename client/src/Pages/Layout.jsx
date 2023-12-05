@@ -19,7 +19,7 @@ const Layout = ({ auth }) => {
     <Box>
       <Box sx={{ position: "static" }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Toolbar id="top" sx={{ p: 0 }} />
+          <Toolbar id="top" sx={{ p: { xs: 0 } }} />
           <Box
             component="img"
             alt="Company logo"
