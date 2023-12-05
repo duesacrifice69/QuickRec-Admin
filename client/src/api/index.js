@@ -31,5 +31,5 @@ const changePassword = async (data) => {
   const response = await API.post("user/changePassword", data, config);
   return response.data;
 };
-
-export default { signin, getEmployeeByEmpNo, changePassword };
+const api = { signin, getEmployeeByEmpNo, changePassword };
+export default api;
