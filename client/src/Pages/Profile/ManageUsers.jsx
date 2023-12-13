@@ -46,7 +46,7 @@ const ManageUsers = () => {
   const [userRole, setUserRole] = useState("");
   const { UserId } = useSelector((state) => state.userContext.data.result);
   const [error, setError] = useState();
-  const [changeUserRole] = useChangeUserRoleMutation();
+  const [changeUserRole, { isLoading }] = useChangeUserRoleMutation();
   const { data: employee, isFetching: employeeIsLoading } = useGetEmployeeQuery(
     {
       employeeNo: employeeNumber,
@@ -122,7 +122,8 @@ const ManageUsers = () => {
           />
         </Paper>
         <ButtonComp
-          sx={{ p: "0.5rem", ml: "auto" }}
+          sx={{ p: "0.5rem" }}
+          align="right"
           onClick={handleOpen}
           startIcon={<PersonAdd />}
         >
@@ -135,7 +136,7 @@ const ManageUsers = () => {
             width: "100%",
             mt: "2rem",
             bgcolor: "background.paper",
-            ":last-child hr": { display: "none" },
+            "& :last-child hr": { display: "none" },
           }}
         >
           {admins.data.map((admin, i) => (
@@ -168,7 +169,7 @@ const ManageUsers = () => {
                   className="listitem-hover-btn"
                   disabled={admin.UserId === UserId}
                   sx={{
-                    m: "auto",
+                    m: "auto 0 auto auto",
                     visibility: "hidden",
                     ":hover": { color: (theme) => theme.palette.primary[500] },
                   }}
@@ -180,7 +181,7 @@ const ManageUsers = () => {
                   className="listitem-hover-btn"
                   disabled={admin.UserId === UserId}
                   sx={{
-                    m: "auto",
+                    m: "auto 1rem",
                     color: "#b53a3a",
                     visibility: "hidden",
                     ":hover": { color: "#ff0000" },
@@ -299,7 +300,9 @@ const ManageUsers = () => {
                     <Grid item xs={12}>
                       <ButtonComp
                         type="submit"
-                        sx={{ width: "100%", mt: "1rem" }}
+                        loading={isLoading}
+                        fullWidth
+                        sx={{ mt: "1rem" }}
                       >
                         Save
                       </ButtonComp>

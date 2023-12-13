@@ -307,11 +307,10 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                         <ButtonComp
                           type="submit"
                           sx={{
-                            display: "block",
                             mt: "2rem",
-                            ml: "auto",
                             p: "1rem ",
                           }}
+                          align="right"
                         >
                           Post Vacancy
                         </ButtonComp>

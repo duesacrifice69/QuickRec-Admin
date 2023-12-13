@@ -31,6 +31,7 @@ const Application = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [application, setApplication] = useState(initState);
   const [error, setError] = useState();
+  const [loading, setLoading] = useState(false);
   const [setActive] = useOutletContext();
   const [approveDetail] = useApproveDetailMutation();
   const [reviewApplication] = useReviewApplicationMutation();
@@ -76,11 +77,13 @@ const Application = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const result = await reviewApplication({
       applicationId,
       status: application.status,
       remarks: application.remarks,
     });
+    setLoading(false);
     result?.error
       ? setError(result.error?.data?.message)
       : navigate("/applications", { state: { vacancyId } });
@@ -319,7 +322,8 @@ const Application = () => {
                 />
               )}
               <ButtonComp
-                sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
+                sx={{ p: "0.5rem 1rem " }}
+                align="center"
                 onClick={() => setActiveStep(4)}
               >
                 Save & Next
@@ -388,11 +392,9 @@ const Application = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <ButtonComp
-                      sx={{
-                        display: "block",
-                        m: "auto",
-                        p: "0.5rem 1rem ",
-                      }}
+                      sx={{ p: "0.5rem 1rem" }}
+                      align="center"
+                      loading={loading}
                       onClick={handleSave}
                     >
                       Save
