@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import Vacancy from "../../components/Vacancy";
+import { Vacancy } from "../../components";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
 

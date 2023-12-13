@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Typography, Container, Paper, Grid } from "@mui/material";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Input, ButtonComp, Error } from "../../components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getUserDataOnSuccess, getUserDataOnFailiure } from "../../state/Auth";
 import api from "../../api/";
-import Error from "../../components/Error";
 
 const initState = { userName: "", password: "" };
 

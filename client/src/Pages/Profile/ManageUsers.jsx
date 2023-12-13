@@ -22,14 +22,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import ButtonComp from "../../components/ButtonComp";
-import ProfileAvatar from "../../components/ProfileAvatar";
-import Input from "../../components/Input";
+import { ButtonComp, ProfileAvatar, Input, Error } from "../../components";
 import {
   useChangeUserRoleMutation,
   useGetEmployeeQuery,
 } from "../../state/api";
-import Error from "../../components/Error";
 import { useSelector } from "react-redux";
 
 const roles = [

@@ -1,5 +1,12 @@
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
-import StepGuide from "../../components/StepGuide";
+import {
+  StepGuide,
+  ApplicationSection,
+  ButtonComp,
+  FileViewer,
+  Input,
+  Error,
+} from "../../components";
 import {
   Box,
   CircularProgress,
@@ -10,17 +17,12 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import ApplicationSection from "../../components/ApplicationSection";
-import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
-import FileViewer from "../../components/FileViewer";
-import Input from "../../components/Input";
 import {
   useReviewApplicationMutation,
   useApproveDetailMutation,
   useGetAppDetailsQuery,
 } from "../../state/api";
-import Error from "../../components/Error";
 
 const initState = {
   status: "PENDING",

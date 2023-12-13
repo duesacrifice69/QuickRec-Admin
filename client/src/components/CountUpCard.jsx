@@ -11,7 +11,6 @@ const CountUpCard = ({ count, title }) => {
         borderRadius: "10px",
         borderTopRightRadius: "30px",
         borderBottomLeftRadius: "30px",
-        // width: { sm: "200px", xs: "125px" },
         maxWidth: "250px",
         textAlign: "center",
         padding: "1rem 0.75rem",

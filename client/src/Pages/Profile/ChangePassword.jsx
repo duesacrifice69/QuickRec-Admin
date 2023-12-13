@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Input, Error, ButtonComp } from "../../components";
 import api from "../../api";
-import Error from "../../components/Error";
 import { Box, Paper } from "@mui/material";
 const initState = {
   currentPassword: "",

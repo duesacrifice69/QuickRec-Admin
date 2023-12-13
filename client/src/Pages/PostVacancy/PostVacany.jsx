@@ -11,14 +11,12 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Input, ButtonComp, Error } from "../../components";
 import { useSelector } from "react-redux";
 import {
   useCreateVacancyMutation,
   useGetMasterDataQuery,
 } from "../../state/api";
-import Error from "../../components/Error";
 import { downloadHandler } from "../../components/DownloadIcon";
 import userHasPermission from "../../permissions";
 
