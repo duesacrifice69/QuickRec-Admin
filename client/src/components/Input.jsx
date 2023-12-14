@@ -18,6 +18,7 @@ import FileUploader from "./FileUploader";
 import { DateField } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { CloudUpload } from "@mui/icons-material";
 
 const Input = ({
   name,
@@ -83,7 +84,7 @@ const Input = ({
             setError={setErrorText}
             handleChange={handleChange}
           >
-            Go
+            <CloudUpload sx={{ display: "block", m: "auto" }} />
           </FileUploader>
         </InputAdornment>
       ),
