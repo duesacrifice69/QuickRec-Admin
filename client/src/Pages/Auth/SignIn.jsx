@@ -29,9 +29,9 @@ const SignIn = () => {
       navigate("/home");
       setLoading(false);
     } catch (error) {
-      dispatch(getUserDataOnFailiure(error.response.data));
+      dispatch(getUserDataOnFailiure(error?.response?.data));
       setError(error.response?.data?.message);
-      console.log(error.response.data);
+      console.log(error?.response?.data);
       setLoading(false);
     }
   };
