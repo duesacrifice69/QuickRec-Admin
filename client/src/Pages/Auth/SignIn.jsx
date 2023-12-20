@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { Typography, Container, Paper, Grid } from "@mui/material";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Input, ButtonComp, Error } from "../../components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getUserDataOnSuccess, getUserDataOnFailiure } from "../../state/Auth";
 import api from "../../api/";
-import Error from "../../components/Error";
 
 const initState = { userName: "", password: "" };
 
 const SignIn = () => {
   const dispatch = useDispatch();
   const [loginData, setLoginData] = useState(initState);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const navigate = useNavigate();
 
@@ -21,17 +20,19 @@ const SignIn = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
-
     try {
       const data = await api.signin(loginData);
       localStorage.setItem("profile", data.token);
       dispatch(getUserDataOnSuccess());
       navigate("/home");
+      setLoading(false);
     } catch (error) {
-      dispatch(getUserDataOnFailiure(error.response.data));
+      dispatch(getUserDataOnFailiure(error?.response?.data));
       setError(error.response?.data?.message);
-      console.log(error.response.data);
+      console.log(error?.response?.data);
+      setLoading(false);
     }
   };
 
@@ -71,7 +72,7 @@ const SignIn = () => {
                 type="submit"
                 sx={{ mb: error ? "auto" : "-2rem" }}
                 fullWidth
-                variant="contained"
+                loading={loading}
               >
                 Sign In
               </ButtonComp>

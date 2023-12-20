@@ -1,5 +1,12 @@
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
-import StepGuide from "../../components/StepGuide";
+import {
+  StepGuide,
+  ApplicationSection,
+  ButtonComp,
+  FileViewer,
+  Input,
+  Error,
+} from "../../components";
 import {
   Box,
   CircularProgress,
@@ -10,17 +17,12 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import ApplicationSection from "../../components/ApplicationSection";
-import ButtonComp from "../../components/ButtonComp";
 import { useEffect, useState } from "react";
-import FileViewer from "../../components/FileViewer";
-import Input from "../../components/Input";
 import {
   useReviewApplicationMutation,
   useApproveDetailMutation,
   useGetAppDetailsQuery,
 } from "../../state/api";
-import Error from "../../components/Error";
 
 const initState = {
   status: "PENDING",
@@ -31,6 +33,7 @@ const Application = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [application, setApplication] = useState(initState);
   const [error, setError] = useState();
+  const [loading, setLoading] = useState(false);
   const [setActive] = useOutletContext();
   const [approveDetail] = useApproveDetailMutation();
   const [reviewApplication] = useReviewApplicationMutation();
@@ -76,11 +79,13 @@ const Application = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const result = await reviewApplication({
       applicationId,
       status: application.status,
       remarks: application.remarks,
     });
+    setLoading(false);
     result?.error
       ? setError(result.error?.data?.message)
       : navigate("/applications", { state: { vacancyId } });
@@ -319,7 +324,8 @@ const Application = () => {
                 />
               )}
               <ButtonComp
-                sx={{ display: "block", m: "auto", p: "0.5rem 1rem " }}
+                sx={{ p: "0.5rem 1rem " }}
+                align="center"
                 onClick={() => setActiveStep(4)}
               >
                 Save & Next
@@ -388,11 +394,9 @@ const Application = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <ButtonComp
-                      sx={{
-                        display: "block",
-                        m: "auto",
-                        p: "0.5rem 1rem ",
-                      }}
+                      sx={{ p: "0.5rem 1rem" }}
+                      align="center"
+                      loading={loading}
                       onClick={handleSave}
                     >
                       Save

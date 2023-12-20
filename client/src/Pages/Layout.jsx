@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Box, Toolbar, useMediaQuery, useScrollTrigger } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import logo from "../Assets/WB_Logo.png";
-import AdminPortalBanner from "../components/AdminPortalBanner";
-import Navbar from "../components/Navbar";
-import ScrollTop from "../components/ScrollTop";
+import { AdminPortalBanner, ScrollTop, Navbar } from "../components";
 
 const Layout = ({ auth }) => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
@@ -19,7 +17,7 @@ const Layout = ({ auth }) => {
     <Box>
       <Box sx={{ position: "static" }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Toolbar id="top" sx={{ p: 0 }} />
+          <Toolbar id="top" sx={{ p: { xs: 0 } }} />
           <Box
             component="img"
             alt="Company logo"

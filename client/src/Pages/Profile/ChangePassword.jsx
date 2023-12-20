@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Input, Error, ButtonComp } from "../../components";
 import api from "../../api";
-import Error from "../../components/Error";
 import { Box, Paper } from "@mui/material";
 const initState = {
   currentPassword: "",
@@ -14,6 +12,7 @@ const initState = {
 const ChangePassword = () => {
   const { UserId } = useSelector((state) => state.userContext.data.result);
   const [passwordChangeData, setPasswordChangeData] = useState(initState);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const confirmPasswordMatches =
     passwordChangeData.confirmNewPassword.length === 0 ||
@@ -27,17 +26,19 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await api.changePassword({
+      await api.changePassword({
         userId: UserId,
         currentPassword: passwordChangeData.currentPassword,
         newPassword: passwordChangeData.newPassword,
       });
-      setError(response?.message);
       setPasswordChangeData(initState);
+      setLoading(false);
     } catch (error) {
       console.log(error?.response?.data);
       setError(error?.response?.data?.message);
+      setLoading(false);
     }
   };
   return (
@@ -89,10 +90,11 @@ const ChangePassword = () => {
         <ButtonComp
           type="submit"
           disabled={!confirmPasswordMatches}
+          loading={loading}
+          align="center"
           sx={{
-            display: "block",
-            p: { xs: "0.6rem", sm: "1rem" },
-            m: "3rem auto 0",
+            p: { xs: "0.6rem 1rem", sm: "1rem 1rem" },
+            mt: "3rem",
           }}
         >
           Change Password

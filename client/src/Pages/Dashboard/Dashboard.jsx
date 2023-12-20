@@ -14,7 +14,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import CountUpCard from "../../components/CountUpCard";
+import { CountUpCard, TablePagination } from "../../components";
 import { BarChart } from "@mui/x-charts/BarChart";
 import {
   useGetMasterDataQuery,
@@ -22,7 +22,6 @@ import {
 } from "../../state/api";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
-import TablePagination from "../../components/TablePagination";
 import dayjs from "dayjs";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 

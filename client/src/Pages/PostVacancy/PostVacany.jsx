@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-import {
-  Box,
-  Container,
-  Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  Paper,
-  Typography,
-} from "@mui/material";
-import Input from "../../components/Input";
-import ButtonComp from "../../components/ButtonComp";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import { Input, ButtonComp, Error } from "../../components";
 import { useSelector } from "react-redux";
 import {
   useCreateVacancyMutation,
   useGetMasterDataQuery,
 } from "../../state/api";
-import Error from "../../components/Error";
-import { downloadHandler } from "../../components/DownloadIcon";
 import userHasPermission from "../../permissions";
+import VacancyDocuments from "./VacancyDocuments";
 
 const initState = {
   VacancyName: "",
@@ -44,7 +33,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const [setActive] = useOutletContext();
   const [attachment, setAttachment] = useState(null);
   const [error, setError] = useState();
-  const [createVacancy] = useCreateVacancyMutation();
+  const [createVacancy, { isLoading }] = useCreateVacancyMutation();
   const { UserId, UserRole } = useSelector(
     (state) => state.userContext.data.result
   );
@@ -110,14 +99,6 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   };
 
   const handleCancel = () => setIsEditing(false);
-
-  const handleReportSchedule = () => {
-    downloadHandler({
-      fileName: "RPTScheduleDetails.pdf",
-      path: "/report/ApplicantsReport",
-      body: { vacancyId: vacancy?.VacancyId },
-    });
-  };
 
   return (
     <Box
@@ -306,12 +287,12 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       {!isEditing ? (
                         <ButtonComp
                           type="submit"
+                          loading={isLoading}
                           sx={{
-                            display: "block",
                             mt: "2rem",
-                            ml: "auto",
                             p: "1rem ",
                           }}
+                          align="right"
                         >
                           Post Vacancy
                         </ButtonComp>
@@ -324,7 +305,9 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                           }}
                         >
                           <ButtonComp onClick={handleCancel}>Cancel</ButtonComp>
-                          <ButtonComp type="submit">Save</ButtonComp>
+                          <ButtonComp type="submit" loading={isLoading}>
+                            Save
+                          </ButtonComp>
                         </div>
                       )}
                     </Grid>
@@ -333,37 +316,12 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                 </Paper>
               </Container>
               {isEditing && (
-                <Paper>
-                  <Typography
-                    sx={{
-                      textAlign: "center",
-                      m: "1rem auto",
-                      fontWeight: 500,
-                    }}
-                  >
-                    Documents
-                  </Typography>
-                  <List
-                    sx={{
-                      "& .MuiButtonBase-root": {
-                        borderBottom: (theme) =>
-                          "1px solid " + theme.palette.secondary[600],
-                      },
-                      "& li:last-child .MuiButtonBase-root": {
-                        borderBottom: "none",
-                      },
-                    }}
-                  >
-                    <ListItem>
-                      <ListItemButton onClick={handleReportSchedule}>
-                        Report Schedule
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemButton>Advertisement</ListItemButton>
-                    </ListItem>
-                  </List>
-                </Paper>
+                <VacancyDocuments
+                  vacancy={{
+                    VacancyId: vacancy.VacancyId,
+                    AdvertisementPath: vacancy?.AdvertismentPath,
+                  }}
+                />
               )}
             </div>
           </form>

@@ -26,12 +26,11 @@ import {
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import Input from "../../components/Input";
+import { Input, TablePagination } from "../../components";
 import {
   useGetApplicationsByVacancyQuery,
   useGetVacancyBySearchQuery,
 } from "../../state/api";
-import TablePagination from "../../components/TablePagination";
 
 const columns = [
   { id: "fullName", label: "Full Name", align: "center" },
