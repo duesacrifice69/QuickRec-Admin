@@ -14,6 +14,7 @@ const ProfileAvatar = ({ width, username }) => {
           bgcolor: (theme) => theme.palette.secondary.main,
           color: "#000",
           border: (theme) => "1px solid " + theme.palette.secondary[700],
+          fontWeight: 500,
           width,
           height: width,
         },
