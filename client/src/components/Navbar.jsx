@@ -27,10 +27,8 @@ import {
   House,
   Logout,
   PostAdd,
-  PendingActions,
 } from "@mui/icons-material";
 import ProfileAvatar from "./ProfileAvatar";
-import userHasPermission from "../permissions";
 
 const Navbar = ({
   active,
@@ -186,13 +184,6 @@ const Navbar = ({
                     Post Vacancy
                   </ListItemStyle>
                   <ListItemStyle
-                    icon={<PendingActions />}
-                    onClick={() => handleClick("/pendingVacancies")}
-                    sx={{ width: "100%" }}
-                  >
-                    Pending Vacancies
-                  </ListItemStyle>
-                  <ListItemStyle
                     icon={<Group />}
                     onClick={() => handleClick("/vacancies")}
                     sx={{ width: "100%" }}
@@ -245,21 +236,11 @@ const Navbar = ({
                         onClick: () => handleClick("/postVacancy"),
                       },
                       {
-                        name: "Pending Vacancies",
-                        icon: <PendingActions />,
-                        onClick: () => handleClick("/pendingVacancies"),
-                      },
-                      {
                         name: "All Vacancies",
                         icon: <Group />,
                         onClick: () => handleClick("/vacancies"),
                       },
-                    ].filter((item) =>
-                      userHasPermission({
-                        userRole: UserRole,
-                        permission: item.name,
-                      })
-                    )}
+                    ]}
                   >
                     Vacancy
                   </ListItemStyle>
