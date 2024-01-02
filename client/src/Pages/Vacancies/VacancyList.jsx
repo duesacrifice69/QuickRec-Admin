@@ -9,19 +9,24 @@ import {
   DialogTitle,
   DialogActions,
   Button,
+  Chip,
+  Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Search } from "@mui/icons-material";
+import { Done, Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { Vacancy } from "../../components";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
 
+const vacancyStatusOptions = ["All", "Pending", "Reviewed", "Open", "Close"];
+
 const VacancyList = () => {
   const [setActive] = useOutletContext();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [filterVacancyStatus, setFilterVacancyStatus] = useState("All");
   // const [deleteVacancy, setDeleteVacancy] = useState();
   const [editingVacancy, setEditingVacancy] = useState({});
   const [searchText, setSearchText] = useState("");
@@ -34,6 +39,13 @@ const VacancyList = () => {
       salaryGroup: "",
       boardGrade: "",
     });
+
+  const filteredVacancyList =
+    filterVacancyStatus === "All"
+      ? searchVacancyList.data
+      : searchVacancyList.data.filter(
+          (vacancy) => vacancy.Status === filterVacancyStatus
+        );
 
   useEffect(() => setActive("2"), [setActive]);
 
@@ -64,6 +76,10 @@ const VacancyList = () => {
   const handleEdit = (vacancy) => {
     setIsEditing(true);
     setEditingVacancy(vacancy);
+  };
+
+  const handleChipClick = (e) => {
+    setFilterVacancyStatus(e.target.outerText);
   };
 
   return !isEditing ? (
@@ -114,6 +130,22 @@ const VacancyList = () => {
             </IconButton>
           </Paper>
         </div>
+        <Box sx={{ display: "flex", gap: "0.5rem", mt: 2, ml: 2 }}>
+          {vacancyStatusOptions.map((status, i) => (
+            <Chip
+              key={i}
+              label={status}
+              icon={
+                filterVacancyStatus === status ? (
+                  <Done sx={{ fontSize: "1rem" }} />
+                ) : null
+              }
+              variant="outlined"
+              color={filterVacancyStatus === status ? "primary" : "default"}
+              onClick={handleChipClick}
+            />
+          ))}
+        </Box>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Delete this Vacancy ?</DialogTitle>
           <DialogActions>
@@ -135,7 +167,7 @@ const VacancyList = () => {
         >
           {searchVacancyList && !vacancySearchLoading ? (
             searchVacancyList.data.length > 0 ? (
-              searchVacancyList.data.map((vacancy) => {
+              filteredVacancyList.map((vacancy) => {
                 return (
                   <Vacancy
                     key={vacancy.VacancyId}
