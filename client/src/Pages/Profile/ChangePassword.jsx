@@ -45,7 +45,7 @@ const ChangePassword = () => {
     <Box sx={{ width: "100%" }}>
       <Paper
         sx={{
-          m: { xs: "2rem 1.25rem", sm: "3rem" },
+          m: { xs: "2rem 1.25rem", sm: "3rem 3rem 0" },
           p: "2rem",
           maxWidth: "max-content",
         }}

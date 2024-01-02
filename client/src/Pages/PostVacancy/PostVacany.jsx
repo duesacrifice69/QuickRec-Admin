@@ -8,7 +8,6 @@ import {
   useCreateVacancyMutation,
   useGetMasterDataQuery,
 } from "../../state/api";
-import userHasPermission from "../../permissions";
 import VacancyDocuments from "./VacancyDocuments";
 
 const initState = {
@@ -24,8 +23,26 @@ const initState = {
   Remarks: "",
   ExpectedNoOfApplicants: 1,
   AdvertismentPath: "",
-  Status: "PENDING",
 };
+
+const statusOptions = {
+  Administrator: [
+    { text: "Reviewed", value: "REVIEWED" },
+    { text: "Approved", value: "APPROVED" },
+    { text: "Inactive", value: "INA" },
+    { text: "Pending", value: "PENDING" },
+  ],
+};
+
+const recruitmentOptions = [
+  { text: "Internal Recruitment", value: "INT" },
+  { text: "External Recruitment", value: "EXT" },
+  { text: "Promotion Recruitment", value: "PRO" },
+  {
+    text: "Internal and External Recruitment",
+    value: "INT_EXT",
+  },
+];
 
 const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
@@ -41,23 +58,9 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
     useGetMasterDataQuery();
   const [vacancy, setVacancy] = useState({
     ...initState,
+    Status: statusOptions[UserRole][0].value,
     userId: UserId,
   });
-
-  const recruitmentOptions = [
-    { text: "Internal Recruitment", value: "INT" },
-    { text: "External Recruitment", value: "EXT" },
-    { text: "Promotion Recruitment", value: "PRO" },
-    {
-      text: "Internal and External Recruitment",
-      value: "INT_EXT",
-    },
-  ];
-  const statusOptions = [
-    { text: "Active", value: "ACT" },
-    { text: "Inactive", value: "INA" },
-    { text: "Pending", value: "PENDING" },
-  ];
 
   useEffect(() => setActive("2"), [setActive]);
 
@@ -70,7 +73,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
         ).value,
         Status:
           editingVacancy.Status === "Open"
-            ? "ACT"
+            ? "APPROVED"
             : editingVacancy.Status === "Close"
             ? "INA"
             : "PENDING",
@@ -240,22 +243,17 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       minRows={5}
                       maxRows={8}
                     />
-                    {userHasPermission({
-                      userRole: UserRole,
-                      permission: "Approve Vacancy",
-                    }) && (
-                      <Input
-                        name="Status"
-                        label="Status :"
-                        type="select"
-                        value={vacancy.Status}
-                        handleChange={handleChange}
-                        options={statusOptions}
-                        disabled={vacancy.NoOfApplicants > 0 ? true : false}
-                        inline
-                        required
-                      />
-                    )}
+                    <Input
+                      name="Status"
+                      label="Status :"
+                      type="select"
+                      value={vacancy.Status}
+                      handleChange={handleChange}
+                      options={statusOptions[UserRole]}
+                      disabled={vacancy.NoOfApplicants > 0 ? true : false}
+                      inline
+                      required
+                    />
                     <Grid item xs={12}>
                       <hr />
                     </Grid>

@@ -7,6 +7,7 @@ export function getUserDataFromToken() {
     const decodedToken = jwt(token);
     if (decodedToken.exp > Date.now() / 1000) {
       decodedData = decodedToken;
+      decodedData.Permissions = JSON.parse(decodedToken.Permissions);
     } else {
       localStorage.clear();
       decodedData = null;
