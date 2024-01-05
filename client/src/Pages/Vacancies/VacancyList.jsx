@@ -19,8 +19,17 @@ import { useTheme } from "@mui/material/styles";
 import { Vacancy } from "../../components";
 import PostVacancy from "../PostVacancy/PostVacany";
 import { useGetVacancyBySearchQuery } from "../../state/api";
+import { VacancyStatus } from "../../constant/data";
+import { useSelector } from "react-redux";
 
-const vacancyStatusOptions = ["All", "Pending", "Reviewed", "Open", "Close"];
+const vacancyStatusOptions = ["All", "Pending", "Review", "Open", "Close"];
+
+const editPermission = {
+  PENDING: "create_vacancy",
+  REVIEWED: "review_vacancy",
+  APPROVED: "approve_vacancy",
+  CLOSED: "approve_vacancy",
+};
 
 const VacancyList = () => {
   const [setActive] = useOutletContext();
@@ -32,6 +41,7 @@ const VacancyList = () => {
   const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const theme = useTheme();
+  const { Permissions } = useSelector((state) => state.userContext.data.result);
   const { data: searchVacancyList, isFetching: vacancySearchLoading } =
     useGetVacancyBySearchQuery({
       searchQuery: search,
@@ -41,11 +51,11 @@ const VacancyList = () => {
     });
 
   const filteredVacancyList =
-    filterVacancyStatus === "All"
-      ? searchVacancyList.data
-      : searchVacancyList.data.filter(
-          (vacancy) => vacancy.Status === filterVacancyStatus
-        );
+    filterVacancyStatus !== "All" &&
+    !vacancySearchLoading &&
+    searchVacancyList.data.filter(
+      (vacancy) => VacancyStatus[vacancy.Status] === filterVacancyStatus
+    );
 
   useEffect(() => setActive("2"), [setActive]);
 
@@ -167,13 +177,17 @@ const VacancyList = () => {
         >
           {searchVacancyList && !vacancySearchLoading ? (
             searchVacancyList.data.length > 0 ? (
-              filteredVacancyList.map((vacancy) => {
+              (filteredVacancyList
+                ? filteredVacancyList
+                : searchVacancyList.data
+              ).map((vacancy, i) => {
                 return (
                   <Vacancy
                     key={vacancy.VacancyId}
                     vacancy={vacancy}
                     onDelete={() => handleDeleteButton(vacancy.VacancyId)}
                     onEdit={() => handleEdit(vacancy)}
+                    editable={Permissions[editPermission[vacancy.Status]]}
                   />
                 );
               })

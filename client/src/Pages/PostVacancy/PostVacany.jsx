@@ -9,6 +9,7 @@ import {
   useGetMasterDataQuery,
 } from "../../state/api";
 import VacancyDocuments from "./VacancyDocuments";
+import { RecruitmentOptions, VacancyStatusOptions } from "../../constant/data";
 
 const initState = {
   VacancyName: "",
@@ -25,25 +26,6 @@ const initState = {
   AdvertismentPath: "",
 };
 
-const statusOptions = {
-  Administrator: [
-    { text: "Reviewed", value: "REVIEWED" },
-    { text: "Approved", value: "APPROVED" },
-    { text: "Inactive", value: "INA" },
-    { text: "Pending", value: "PENDING" },
-  ],
-};
-
-const recruitmentOptions = [
-  { text: "Internal Recruitment", value: "INT" },
-  { text: "External Recruitment", value: "EXT" },
-  { text: "Promotion Recruitment", value: "PRO" },
-  {
-    text: "Internal and External Recruitment",
-    value: "INT_EXT",
-  },
-];
-
 const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -51,14 +33,17 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
   const [attachment, setAttachment] = useState(null);
   const [error, setError] = useState();
   const [createVacancy, { isLoading }] = useCreateVacancyMutation();
-  const { UserId, UserRole } = useSelector(
+  const { UserId, Permissions } = useSelector(
     (state) => state.userContext.data.result
+  );
+  const allowedStatusOptions = VacancyStatusOptions.filter((option) =>
+    option.permission.some((permission) => Permissions[permission])
   );
   const { data: masterData, isLoading: masterDataIsLoading } =
     useGetMasterDataQuery();
   const [vacancy, setVacancy] = useState({
     ...initState,
-    Status: statusOptions[UserRole][0].value,
+    Status: allowedStatusOptions[0].value,
     userId: UserId,
   });
 
@@ -68,15 +53,9 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
     editingVacancy &&
       setVacancy({
         ...editingVacancy,
-        RecruitmentType: recruitmentOptions.find(
+        RecruitmentType: RecruitmentOptions.find(
           (v) => v.text === editingVacancy.RecruitmentType
         ).value,
-        Status:
-          editingVacancy.Status === "Open"
-            ? "APPROVED"
-            : editingVacancy.Status === "Close"
-            ? "INA"
-            : "PENDING",
       });
     // eslint-disable-next-line
   }, [editingVacancy]);
@@ -157,7 +136,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                         }}
                       >
                         {vacancy.RecruitmentType &&
-                          recruitmentOptions.find(
+                          RecruitmentOptions.find(
                             (v) => v.value === vacancy.RecruitmentType
                           ).text + " to : "}
                         <span
@@ -173,17 +152,17 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       name="VacancyName"
                       value={vacancy.VacancyName}
                       handleChange={handleChange}
-                      label="Vacancy :"
+                      label="Vacancy"
                       required
                       inline
                     />
                     <Input
                       name="RecruitmentType"
                       type="select"
-                      options={recruitmentOptions}
+                      options={RecruitmentOptions}
                       value={vacancy.RecruitmentType}
                       handleChange={handleChange}
-                      label="Recruitment Method :"
+                      label="Recruitment Method"
                       required
                       inline
                     />
@@ -192,7 +171,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       type="date"
                       value={vacancy.ClosingDate}
                       handleChange={handleChange}
-                      label="Closing Date of Application :"
+                      label="Closing Date of Application"
                       required
                       inline
                     />
@@ -201,14 +180,14 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                       type="date"
                       value={vacancy.PlannedInterViewDate}
                       handleChange={handleChange}
-                      label="Expected Date of Interview :"
+                      label="Expected Date of Interview"
                       required
                       inline
                     />
                     <Input
                       type="number"
                       name="NoOfVacancies"
-                      label="No. of Vacancies :"
+                      label="No. of Vacancies"
                       value={vacancy.NoOfVacancies}
                       handleChange={handleChange}
                       inline
@@ -217,7 +196,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     <Input
                       type="number"
                       name="AgeLimit"
-                      label="Age Limit :"
+                      label="Age Limit"
                       value={vacancy.AgeLimit}
                       handleChange={handleChange}
                       inline
@@ -225,7 +204,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     />
                     <Input
                       name="AdvertismentPath"
-                      label="Advertisment :"
+                      label="Advertisment"
                       value={vacancy.AdvertismentPath}
                       setAttachment={setAttachment}
                       type="file"
@@ -234,7 +213,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     />
                     <Input
                       name="Remarks"
-                      label="Remarks :"
+                      label="Remarks"
                       value={vacancy.Remarks}
                       handleChange={handleChange}
                       size="medium"
@@ -245,12 +224,17 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     />
                     <Input
                       name="Status"
-                      label="Status :"
+                      label="Status"
                       type="select"
                       value={vacancy.Status}
                       handleChange={handleChange}
-                      options={statusOptions[UserRole]}
-                      disabled={vacancy.NoOfApplicants > 0 ? true : false}
+                      options={allowedStatusOptions}
+                      disabled={
+                        vacancy.Status === "APPROVED" &&
+                        vacancy.NoOfApplicants > 0
+                          ? true
+                          : false
+                      }
                       inline
                       required
                     />
@@ -259,7 +243,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     </Grid>
                     <Input
                       name="SalaryGroupId"
-                      label="Salary Group :"
+                      label="Salary Group"
                       type="select"
                       value={vacancy.SalaryGroupId}
                       handleChange={handleChange}
@@ -271,7 +255,7 @@ const PostVacancy = ({ isEditing, setIsEditing, editingVacancy }) => {
                     />
                     <Input
                       name="BoardGradeId"
-                      label="Board Grade :"
+                      label="Board Grade"
                       type="select"
                       options={masterData?.data?.boardGrades}
                       loading={masterDataIsLoading}
