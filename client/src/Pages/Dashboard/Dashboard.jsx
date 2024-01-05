@@ -77,7 +77,7 @@ const Dashboard = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const rows =
-    vacancies?.data.filter((vacancy) => vacancy.Status === "Open") ?? [];
+    vacancies?.data.filter((vacancy) => vacancy.Status === "APPROVED") ?? [];
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 

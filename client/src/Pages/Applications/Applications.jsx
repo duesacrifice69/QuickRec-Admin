@@ -22,6 +22,8 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
@@ -31,13 +33,16 @@ import {
   useGetApplicationsByVacancyQuery,
   useGetVacancyBySearchQuery,
 } from "../../state/api";
+import { ApplicationReviewStatus } from "../../constant/data";
+import { useSelector } from "react-redux";
 
 const columns = [
   { id: "fullName", label: "Full Name", align: "center" },
   { id: "vacancy", label: "Vacancy", align: "center" },
   { id: "phoneNo", label: "Phone No", align: "center" },
   { id: "date", label: "Date", align: "center" },
-  { id: "status", label: "Status", align: "center", filter: true },
+  { id: "status", label: "Status", align: "center" },
+  { id: "action", label: "Action", align: "center" },
 ];
 
 const statusList = ["All", "Selected", "Rejected", "Pending"];
@@ -46,6 +51,7 @@ const Applications = () => {
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("ALL");
+  const [showAllApplications, setShowAllApplications] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [vacancyId, setVacancyId] = useState(undefined);
   const [vacancy, setVacancy] = useState(null);
@@ -54,6 +60,7 @@ const Applications = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const navigate = useNavigate();
+  const { Permissions } = useSelector((state) => state.userContext.data.result);
   const { data: allApplications, isLoading: applicationsIsLoading } =
     useGetApplicationsByVacancyQuery(vacancyId);
   const { data: vacancies, isLoading: vacanciesIsLoading } =
@@ -78,8 +85,18 @@ const Applications = () => {
   }, [vacancyId, vacancies?.data, vacanciesIsLoading]);
 
   const allRows = allApplications?.data ?? [];
+  const permittedRows = showAllApplications
+    ? allRows
+    : allRows.filter((row) => {
+        const hasPermission = ApplicationReviewStatus[
+          row.ReviewStatus
+        ].permission.some((permission) => Permissions[permission]);
+        return hasPermission;
+      });
   const rows =
-    status === "ALL" ? allRows : allRows.filter((row) => row.Status === status);
+    status === "ALL"
+      ? permittedRows
+      : permittedRows.filter((row) => row.Status === status);
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -93,12 +110,13 @@ const Applications = () => {
     setPage(0);
   };
 
-  const handleApplicationView = (userId, applicationId) => {
+  const handleApplicationView = (userId, applicationId, hasPermission) => {
     navigate("/application", {
       state: {
         userId,
         applicationId,
         vacancyId,
+        hasPermission,
       },
     });
   };
@@ -143,7 +161,7 @@ const Applications = () => {
                 container
                 rowSpacing={2}
                 sx={{
-                  m: "2rem auto",
+                  m: "2rem auto ",
                   backgroundColor: theme.palette.background.main,
                   borderRadius: "10px",
                   p: "1rem 3vw",
@@ -264,6 +282,29 @@ const Applications = () => {
 
             {/* ---------- Applicants Table ---------- */}
             <Grid item xs={12}>
+              <FormControlLabel
+                sx={{
+                  display: "flex",
+                  justifySelf: "right",
+                  mr: "5px",
+                  mb: "10px",
+                }}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={showAllApplications}
+                    onChange={(e) => {
+                      setShowAllApplications(e.target.checked);
+                    }}
+                  />
+                }
+                label={
+                  <Typography fontSize="14px" fontWeight={500}>
+                    All Applications
+                  </Typography>
+                }
+                labelPlacement="start"
+              />
               <Table
                 sx={{
                   display: { xs: "block", sm: "table" },
@@ -323,43 +364,69 @@ const Applications = () => {
                             page * rowsPerPage + rowsPerPage
                           )
                         : rows
-                      ).map((row) => (
-                        <TableRow
-                          hover
-                          key={row.ApplicationId}
-                          sx={{ cursor: "pointer" }}
-                          onClick={() =>
-                            handleApplicationView(row.UserId, row.ApplicationId)
-                          }
-                        >
-                          <TableCell align="left">
-                            {row.NameWithInitials}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.VacancyName}
-                          </TableCell>
-                          <TableCell align="center">{row.MobileNo1}</TableCell>
-                          <TableCell align="center">
-                            {dayjs(row.AppliedDate).format("DD/MM/YYYY")}
-                          </TableCell>
-                          <TableCell align="center">
-                            <Chip
-                              sx={{
-                                backgroundColor:
-                                  row.Status === "REJECTED"
-                                    ? "#e57373"
-                                    : row.Status === "SELECTED"
-                                    ? "#81c784"
-                                    : "#f7cb73",
-                              }}
-                              label={
-                                row.Status.charAt(0) +
-                                row.Status.slice(1).toLowerCase()
-                              }
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      ).map((row) => {
+                        const hasPermission = ApplicationReviewStatus[
+                          row.ReviewStatus
+                        ].permission.some(
+                          (permission) => Permissions[permission]
+                        );
+
+                        const actionBy =
+                          row.ApprovedBy ??
+                          row.CertifiedBy ??
+                          row.RecommendedBy ??
+                          "";
+
+                        return (
+                          <TableRow
+                            hover
+                            key={row.ApplicationId}
+                            sx={{
+                              cursor: "pointer",
+                            }}
+                            onClick={() =>
+                              handleApplicationView(
+                                row.UserId,
+                                row.ApplicationId,
+                                hasPermission
+                              )
+                            }
+                          >
+                            <TableCell align="left">
+                              {row.NameWithInitials}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.VacancyName}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.MobileNo1}
+                            </TableCell>
+                            <TableCell align="center">
+                              {dayjs(row.AppliedDate).format("DD/MM/YYYY")}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Chip
+                                sx={{
+                                  backgroundColor:
+                                    row.Status === "REJECTED"
+                                      ? "#e57373"
+                                      : row.Status === "SELECTED"
+                                      ? "#81c784"
+                                      : "#f7cb73",
+                                }}
+                                label={
+                                  row.Status.charAt(0) +
+                                  row.Status.slice(1).toLowerCase()
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              {ApplicationReviewStatus[row.ReviewStatus].value +
+                                actionBy}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                       {emptyRows > 0 && (
                         <TableRow style={{ height: 53 * emptyRows }}>
                           <TableCell colSpan={columns.length} />

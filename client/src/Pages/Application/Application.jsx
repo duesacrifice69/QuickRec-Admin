@@ -12,6 +12,9 @@ import {
   CircularProgress,
   Container,
   Grid,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
   useMediaQuery,
   useTheme,
@@ -23,6 +26,7 @@ import {
   useApproveDetailMutation,
   useGetAppDetailsQuery,
 } from "../../state/api";
+import { ApplicationReviewStatus } from "../../constant/data";
 
 const initState = {
   status: "PENDING",
@@ -40,7 +44,7 @@ const Application = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const location = useLocation();
-  const { userId, applicationId, vacancyId } = location?.state;
+  const { userId, applicationId, vacancyId, hasPermission } = location?.state;
   const navigate = useNavigate();
   const { data: applicationData, isLoading: applicationIsLoading } =
     useGetAppDetailsQuery({ userId, applicationId });
@@ -102,6 +106,27 @@ const Application = () => {
     >
       {applicationData && !applicationIsLoading ? (
         <Container maxWidth="lg">
+          <Stepper
+            activeStep={ApplicationReviewStatus[basicDetails.ReviewStatus].step}
+          >
+            {["Recommended", "Certified", "Approved"].map((label, index) => {
+              const optional = (
+                <Typography variant="caption">
+                  {index === 0
+                    ? basicDetails?.RecommendedBy ?? ""
+                    : index === 1
+                    ? basicDetails?.CertifiedBy ?? ""
+                    : basicDetails?.ApprovedBy ?? ""}
+                </Typography>
+              );
+
+              return (
+                <Step key={label}>
+                  <StepLabel optional={optional}>{label}</StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
           <Box
             sx={{
               display: "flex",
@@ -119,6 +144,7 @@ const Application = () => {
               <ApplicationSection
                 title="Basic Details"
                 isApproved={basicDetails.isApproved}
+                hasPermission={hasPermission}
                 handleApprove={(e) =>
                   handleApprove(e, 1, basicDetails.basicDetailsId)
                 }
@@ -305,6 +331,7 @@ const Application = () => {
               {education && (
                 <ApplicationSection
                   title="Educational Qualification"
+                  hasPermission={hasPermission}
                   details={education}
                   handleApprove={(e, detailId) => handleApprove(e, 2, detailId)}
                 />
@@ -312,6 +339,7 @@ const Application = () => {
               {experience && (
                 <ApplicationSection
                   title="Professional Experience"
+                  hasPermission={hasPermission}
                   details={experience}
                   handleApprove={(e, detailId) => handleApprove(e, 3, detailId)}
                 />
@@ -319,6 +347,7 @@ const Application = () => {
               {otherDetails && (
                 <ApplicationSection
                   title="Other Achievements"
+                  hasPermission={hasPermission}
                   details={otherDetails}
                   handleApprove={(e, detailId) => handleApprove(e, 4, detailId)}
                 />
@@ -328,7 +357,7 @@ const Application = () => {
                 align="center"
                 onClick={() => setActiveStep(4)}
               >
-                Save & Next
+                {hasPermission ? "Save & Next" : "Next"}
               </ButtonComp>
             </Box>
             <Box
@@ -360,50 +389,52 @@ const Application = () => {
                     fileName={basicDetails?.BCPath}
                   />
                 </Box>
-                <Grid container spacing={5} sx={{ p: "2rem" }}>
-                  <Grid item xs={3}>
-                    <Typography>Status:</Typography>
+                {hasPermission && (
+                  <Grid container spacing={5} sx={{ p: "2rem" }}>
+                    <Grid item xs={3}>
+                      <Typography>Status:</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Input
+                        name="status"
+                        type="select"
+                        required
+                        value={application.status}
+                        handleChange={handleChange}
+                        options={[
+                          { value: "SELECTED", text: "Selected" },
+                          { value: "REJECTED", text: "Rejected" },
+                          { value: "PENDING", text: "Pending" },
+                        ]}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography>Remarks:</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Input
+                        name="remarks"
+                        value={application.remarks}
+                        handleChange={handleChange}
+                        size="medium"
+                        multiline
+                        minRows={5}
+                        maxRows={8}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <ButtonComp
+                        sx={{ p: "0.5rem 1rem" }}
+                        align="center"
+                        loading={loading}
+                        onClick={handleSave}
+                      >
+                        Save
+                      </ButtonComp>
+                    </Grid>
+                    <Error error={error} setError={setError} />
                   </Grid>
-                  <Grid item xs={9}>
-                    <Input
-                      name="status"
-                      type="select"
-                      required
-                      value={application.status}
-                      handleChange={handleChange}
-                      options={[
-                        { value: "SELECTED", text: "Selected" },
-                        { value: "REJECTED", text: "Rejected" },
-                        { value: "PENDING", text: "Pending" },
-                      ]}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography>Remarks:</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <Input
-                      name="remarks"
-                      value={application.remarks}
-                      handleChange={handleChange}
-                      size="medium"
-                      multiline
-                      minRows={5}
-                      maxRows={8}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <ButtonComp
-                      sx={{ p: "0.5rem 1rem" }}
-                      align="center"
-                      loading={loading}
-                      onClick={handleSave}
-                    >
-                      Save
-                    </ButtonComp>
-                  </Grid>
-                  <Error error={error} setError={setError} />
-                </Grid>
+                )}
               </ApplicationSection>
             </Box>
             <StepGuide activeStep={activeStep} setActiveStep={setActiveStep} />
