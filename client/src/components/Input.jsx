@@ -103,11 +103,22 @@ const Input = ({
 
   return (
     <Grid item container xs={12} sm={half ? 6 : 12} sx={{ textAlign: "left" }}>
-      <Grid item xs={inline && !isMobile ? 6 : 12}>
-        <Typography sx={{ fontSize: "1rem", fontWeight: 500, mb: "5px" }}>
-          {label}
-        </Typography>
-      </Grid>
+      {label && (
+        <Grid item xs={inline && !isMobile ? 6 : 12} sx={{ display: "flex" }}>
+          <Typography
+            sx={{
+              fontSize: "1rem",
+              fontWeight: 500,
+              mb: "5px",
+            }}
+          >
+            {label}
+          </Typography>
+          {required && (
+            <Typography sx={{ color: "red", ml: "5px" }}>*</Typography>
+          )}
+        </Grid>
+      )}
       <Grid item xs={inline && !isMobile ? 6 : 12}>
         {/*---------------------- Date Input ---------------------- */}
         {type === "date" ? (

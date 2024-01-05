@@ -56,13 +56,13 @@ const SignIn = () => {
           <Grid container spacing={2} sx={{ mt: "1rem" }}>
             <Input
               name="userName"
-              label="Email Address/ Employee No *"
+              label="Email Address/ Employee No"
               handleChange={handleChange}
               required
             />
             <Input
               name="password"
-              label="Password *"
+              label="Password"
               handleChange={handleChange}
               required
               type="password"

@@ -61,7 +61,7 @@ const ChangePassword = () => {
           }}
         >
           <Input
-            label="Current Password *"
+            label="Current Password"
             type="password"
             name="currentPassword"
             value={passwordChangeData.currentPassword}
@@ -69,7 +69,7 @@ const ChangePassword = () => {
             required
           />
           <Input
-            label="New Password *"
+            label="New Password"
             type="password"
             name="newPassword"
             value={passwordChangeData.newPassword}
@@ -77,7 +77,7 @@ const ChangePassword = () => {
             required
           />
           <Input
-            label="Confirm New Password *"
+            label="Confirm New Password"
             type="password"
             name="confirmNewPassword"
             value={passwordChangeData.confirmNewPassword}
