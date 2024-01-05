@@ -36,7 +36,9 @@ function App() {
           <Route path="/applications" element={<Applications />} />
           <Route path="/application" element={<Application />} />
           <Route path="/vacancies" element={<VacancyList />} />
-          <Route path="/postVacancy" element={<PostVacancy />} />
+          {user?.Permissions?.create_vacancy && (
+            <Route path="/postVacancy" element={<PostVacancy />} />
+          )}
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>

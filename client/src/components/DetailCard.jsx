@@ -25,7 +25,7 @@ const ExpandMore = styled((props) => {
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
 }));
 
-const DetailCard = ({ detail, handleApprove }) => {
+const DetailCard = ({ detail, handleApprove, hasPermission }) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
@@ -61,37 +61,41 @@ const DetailCard = ({ detail, handleApprove }) => {
             <DownloadIcon fileName={detail.attachmentPath} />
           </Grid>
           <Grid item xs={4} justifyContent="flex-end">
-            <FormControlLabel
-              sx={{
-                display: "flex",
-                justifySelf: "right",
-              }}
-              control={
-                <Checkbox
-                  size="small"
-                  checked={checked}
-                  onChange={(e) => {
-                    setChecked(e.target.checked);
-                    handleApprove(e);
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  fontSize="14px"
-                  color={theme.palette.secondary[700]}
-                >
-                  Approve
-                </Typography>
-              }
-              labelPlacement="start"
-            />
+            {hasPermission && (
+              <FormControlLabel
+                sx={{
+                  display: "flex",
+                  justifySelf: "right",
+                }}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={checked}
+                    onChange={(e) => {
+                      setChecked(e.target.checked);
+                      handleApprove(e);
+                    }}
+                  />
+                }
+                label={
+                  <Typography
+                    fontSize="14px"
+                    color={theme.palette.secondary[700]}
+                  >
+                    Approve
+                  </Typography>
+                }
+                labelPlacement="start"
+              />
+            )}
           </Grid>
           {detail.startDate && detail.endDate && (
             <Grid item xs={isMobile ? 12 : 5}>
               <Typography fontSize={isMobile ? "14px" : "16px"}>
-                From {dayjs(detail.startDate).format("MMM YYYY")} to{"  "}
-                {dayjs(detail.endDate).format("MMM YYYY")}
+                {"From " +
+                  dayjs(detail.startDate).format("MMM D, YYYY") +
+                  " to " +
+                  dayjs(detail.endDate).format("MMM D, YYYY")}
               </Typography>
             </Grid>
           )}

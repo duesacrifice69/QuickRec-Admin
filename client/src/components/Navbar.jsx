@@ -41,7 +41,7 @@ const Navbar = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const { UserName, UserRole } = useSelector(
+  const { UserName, UserRole, Permissions } = useSelector(
     (state) => state.userContext.data.result
   );
 
@@ -176,13 +176,15 @@ const Navbar = ({
                   timeout="auto"
                   unmountOnExit
                 >
-                  <ListItemStyle
-                    icon={<PostAdd />}
-                    onClick={() => handleClick("/postVacancy")}
-                    sx={{ width: "100%" }}
-                  >
-                    Post Vacancy
-                  </ListItemStyle>
+                  {Permissions.create_vacancy && (
+                    <ListItemStyle
+                      icon={<PostAdd />}
+                      onClick={() => handleClick("/postVacancy")}
+                      sx={{ width: "100%" }}
+                    >
+                      Post Vacancy
+                    </ListItemStyle>
+                  )}
                   <ListItemStyle
                     icon={<Group />}
                     onClick={() => handleClick("/vacancies")}
@@ -234,6 +236,7 @@ const Navbar = ({
                         name: "Post Vacancy",
                         icon: <PostAdd />,
                         onClick: () => handleClick("/postVacancy"),
+                        permission: Permissions.create_vacancy,
                       },
                       {
                         name: "All Vacancies",

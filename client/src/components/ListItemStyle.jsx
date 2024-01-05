@@ -68,19 +68,22 @@ const ListItemStyle = ({
               onClose={handleMenuClose}
               TransitionComponent={Fade}
             >
-              {subMenu.map((item, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setAnchorEl(null);
-                    item.onClick(e);
-                  }}
-                >
-                  {item.icon}&nbsp;&nbsp;
-                  {item.name}
-                </MenuItem>
-              ))}
+              {subMenu.map(
+                (item, i) =>
+                  item.permission !== false && (
+                    <MenuItem
+                      key={i}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAnchorEl(null);
+                        item.onClick(e);
+                      }}
+                    >
+                      {item.icon}&nbsp;&nbsp;
+                      {item.name}
+                    </MenuItem>
+                  )
+              )}
             </Menu>
           </>
         )}

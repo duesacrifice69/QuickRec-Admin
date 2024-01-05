@@ -16,6 +16,7 @@ const ApplicationSection = ({
   children,
   isApproved,
   handleApprove,
+  hasPermission,
   sx,
 }) => {
   const [checked, setChecked] = useState(isApproved);
@@ -41,6 +42,7 @@ const ApplicationSection = ({
             <DetailCard
               key={index}
               detail={detail}
+              hasPermission={hasPermission}
               handleApprove={(e) =>
                 handleApprove(
                   e,
@@ -52,7 +54,7 @@ const ApplicationSection = ({
             />
           ))}
 
-        {!details && (
+        {!details && hasPermission && (
           <FormControlLabel
             sx={{
               display: "flex",

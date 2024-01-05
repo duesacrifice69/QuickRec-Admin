@@ -9,19 +9,14 @@ const sections = ["Change Password"];
 
 const Profile = () => {
   const [setActive] = useOutletContext();
-  const { UserRole, Permissions } = useSelector(
-    (state) => state.userContext.data.result
-  );
+  const { Permissions } = useSelector((state) => state.userContext.data.result);
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
-    console.log(Permissions.Manage_Users);
-    if (Permissions.Manage_Users && !sections.includes("Manage Users")) {
-      console.log("1");
+    if (Permissions.manage_users && !sections.includes("Manage Users")) {
       sections.push("Manage Users");
-    } else if (!Permissions.Manage_Users && sections.includes("Manage Users")) {
+    } else if (!Permissions.manage_users && sections.includes("Manage Users")) {
       sections.pop();
-      console.log("2");
     }
   }, [Permissions]);
 
@@ -79,7 +74,7 @@ const Profile = () => {
         ))}
       </Box>
       {activeSection === 0 && <ChangePassword />}
-      {activeSection === 1 && <ManageUsers />}
+      {Permissions.manage_users && activeSection === 1 && <ManageUsers />}
     </Box>
   );
 };
